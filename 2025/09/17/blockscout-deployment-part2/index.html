@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Layer2 —— Blockscout 部署指南 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Layer2 —— Blockscout 部署指南</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Blockscout/" title="Blockscout">
+                    #Blockscout
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Layer2/" title="Layer2">
+                    #Layer2
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="一、系统环境准备"><a href="#一、系统环境准备" class="headerlink" title="一、系统环境准备"></a>一、系统环境准备</h2><h3 id="1-1-安装软件依赖"><a href="#1-1-安装软件依赖" class="headerlink" title="1.1 安装软件依赖"></a>1.1 安装软件依赖</h3><p>打开 Ubuntu-24.04 子系统</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新系统</span></span><br><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt upgrade -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 基础工具</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y curl wget git</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译工具 / 构建</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y build-essential make g++ gcc automake libtool cmake</span><br><span class="line"></span><br><span class="line"><span class="comment"># 系统库</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y libudev-dev libgmp-dev libgmp10 libssl-dev libncurses-dev</span><br><span class="line"></span><br><span class="line"><span class="comment"># 压缩 / 解压</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y zip unzip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监控工具</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y inotify-tools</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 asdf</span></span><br><span class="line">go install github.com/asdf-vm/asdf/cmd/asdf@v0.18.0</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;export PATH=&quot;$HOME/go/bin:$PATH&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 postgreSQL-17 数据库</span></span><br><span class="line">curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|<span class="built_in">sudo</span> gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg</span><br><span class="line"><span class="built_in">sudo</span> sh -c <span class="string">&#x27;echo &quot;deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main&quot; &gt; /etc/apt/sources.list.d/pgdg.list&#x27;</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install postgresql-17</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 rust</span></span><br><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 docker-compose</span></span><br><span class="line"><span class="built_in">sudo</span> apt install docker-compose</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-配置-asdf"><a href="#1-2-配置-asdf" class="headerlink" title="1.2 配置 asdf"></a>1.2 配置 asdf</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Erlang、Elixir、Node.js 插件</span></span><br><span class="line">asdf plugin add erlang</span><br><span class="line">asdf plugin add elixir</span><br><span class="line">asdf plugin add nodejs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于 blockscout backend</span></span><br><span class="line">asdf install erlang 27.3.4</span><br><span class="line">asdf install elixir 1.17.3-otp-27</span><br><span class="line">asdf install nodejs 20.17.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用于 blockscout frontend</span></span><br><span class="line">asdf install nodejs 22.11.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载 asdf 环境变量</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;<span class="variable">$HOME</span>/.asdf/shims:<span class="variable">$HOME</span>/.asdf/bin:<span class="variable">$PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-配置-Postgres-数据库"><a href="#1-3-配置-Postgres-数据库" class="headerlink" title="1.3 配置 Postgres 数据库"></a>1.3 配置 Postgres 数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换数据库管理员</span></span><br><span class="line">su - postgres 			<span class="comment"># for Root</span></span><br><span class="line"><span class="built_in">sudo</span> -i -u postgres 	<span class="comment"># for user</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建数据库用户</span></span><br><span class="line">createuser --interactive</span><br><span class="line"><span class="comment"># 输入角色名: YOUR_DBUSER_NAME</span></span><br><span class="line"><span class="comment"># 是否为超级用户? (y/n) y</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建数据库</span></span><br><span class="line">createdb blockscout</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改用户密码</span></span><br><span class="line">psql</span><br><span class="line">ALTER USER YOUR_DBUSER_NAME WITH PASSWORD <span class="string">&#x27;YourSecurePassword&#x27;</span>;</span><br><span class="line">GRANT ALL PRIVILEGES ON DATABASE blockscout TO YOUR_DBUSER_NAME;</span><br><span class="line">\q</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart postgresql</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查数据库设置是否成功</span></span><br><span class="line">su - YOUR_DBUSER_NAME 		<span class="comment"># for Root</span></span><br><span class="line"><span class="built_in">sudo</span> su - YOUR_DBUSER_NAME 	<span class="comment"># for user</span></span><br><span class="line">psql -d blockscout			<span class="comment"># 如果能看到 blockscout=# 说明成功</span></span><br><span class="line">\q</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 psql 运行状态</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl status postgresql</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、构建-Blockscout-Backend"><a href="#二、构建-Blockscout-Backend" class="headerlink" title="二、构建 Blockscout Backend"></a>二、构建 Blockscout Backend</h2><h3 id="2-1-克隆-Blockscout-Backend-仓库"><a href="#2-1-克隆-Blockscout-Backend-仓库" class="headerlink" title="2.1 克隆 Blockscout Backend 仓库"></a>2.1 克隆 Blockscout Backend 仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建 blockscout 工作目录</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"><span class="built_in">mkdir</span> -p blockscout</span><br><span class="line"><span class="built_in">cd</span> blockscout</span><br><span class="line"></span><br><span class="line"><span class="comment"># 克隆 blockscout backend 并切换到最新 release 分支</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/blockscout/blockscout.git backend</span><br><span class="line"><span class="built_in">cd</span> backend</span><br><span class="line">git checkout v9.1.0 -b v9.1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 Mix 依赖并编译</span></span><br><span class="line">mix <span class="keyword">do</span> deps.get, local.rebar --force, deps.compile, compile</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为数据库生成新的 secret_key_base</span></span><br><span class="line">mix phx.gen.secret</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-编辑环境变量文件"><a href="#2-2-编辑环境变量文件" class="headerlink" title="2.2 编辑环境变量文件"></a>2.2 编辑环境变量文件</h3><p>创建 <code>env_vars.env</code> 文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano env_vars.env</span><br></pre></td></tr></table></figure>
+
+<p>填写以下变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DATABASE_URL=postgresql://YOUR_DBUSER_NAME:YourSecurePassword@localhost:5432/blockscout</span><br><span class="line"><span class="built_in">export</span> SECRET_KEY_BASE= <span class="comment"># generated by mix phx.gen.secret</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> ETHEREUM_JSONRPC_VARIANT=geth</span><br><span class="line"><span class="built_in">export</span> ETHEREUM_JSONRPC_HTTP_URL=http://localhost:8545</span><br><span class="line"><span class="built_in">export</span> ETHEREUM_JSONRPC_WS_URL=ws://localhost:8546</span><br><span class="line"><span class="built_in">export</span> ETHEREUM_JSONRPC_TRACE_URL=http://localhost:8545</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> API_V2_ENABLED=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> PORT=4000</span><br><span class="line"><span class="built_in">export</span> MIX_ENV=prod</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> CHAIN_ID=L2_CHAIN_ID</span><br><span class="line"><span class="built_in">export</span> L1_RPC=L1_RPC_URL</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> COIN=ETH</span><br><span class="line"><span class="built_in">export</span> COIN_NAME=<span class="string">&quot;Sepolia ETH&quot;</span></span><br><span class="line"><span class="built_in">export</span> COINGECKO_COIN_ID=ethereum</span><br><span class="line"><span class="built_in">export</span> DISPLAY_TOKEN_ICONS=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_SC_VERIFIER_ENABLED=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_SC_VERIFIER_URL=http://localhost:8082/</span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_VISUALIZE_SOL2UML_ENABLED=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_VISUALIZE_SOL2UML_URL=http://localhost:8081/</span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_SIG_PROVIDER_ENABLED=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> MICROSERVICE_SIG_PROVIDER_URL=http://localhost:8083/</span><br></pre></td></tr></table></figure>
+
+<p>加载环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> env_vars.env</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 postgresql 运行状态</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl status postgresql</span><br><span class="line"><span class="comment"># 创建数据库并迁移</span></span><br><span class="line">mix <span class="keyword">do</span> ecto.create, ecto.migrate</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-安装-Blockscout-Backend-内置前端静态资源"><a href="#2-3-安装-Blockscout-Backend-内置前端静态资源" class="headerlink" title="2.3 安装 Blockscout Backend 内置前端静态资源"></a>2.3 安装 Blockscout Backend 内置前端静态资源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 Node.js 依赖</span></span><br><span class="line"><span class="built_in">cd</span> apps/block_scout_web/assets</span><br><span class="line">npm install</span><br><span class="line">node_modules/webpack/bin/webpack.js --mode production</span><br><span class="line"><span class="built_in">cd</span> -</span><br><span class="line"><span class="built_in">cd</span> apps/explorer</span><br><span class="line">npm install</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译静态资源</span></span><br><span class="line"><span class="built_in">cd</span> ../block_scout_web/</span><br><span class="line">mix phx.digest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成自签名证书以启用 HTTPS（开发环境）：</span></span><br><span class="line">mix phx.gen.cert blockscout blockscout.local</span><br><span class="line"><span class="built_in">cd</span> ../..</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>blockscout</code> 和 <code>blockscout.local</code> 添加到 <code>/etc/hosts</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加以下行</span></span><br><span class="line">127.0.0.1 	localhost blockscout blockscout.local</span><br><span class="line">::1 		localhost blockscout blockscout.local</span><br><span class="line"></span><br><span class="line"> <span class="built_in">sudo</span> nano /etc/postgresql/17/main/pg_hba.conf</span><br><span class="line">host    all             all            0.0.0.0/0               scram-sha-256</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、运行微服务"><a href="#三、运行微服务" class="headerlink" title="三、运行微服务"></a>三、运行微服务</h2><h3 id="3-1-修改-stats-yml"><a href="#3-1-修改-stats-yml" class="headerlink" title="3.1 修改 stats.yml"></a>3.1 修改 stats.yml</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> docker-compose/services</span><br><span class="line">nano stats.yml</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>stats.yml</code> 文件的第 <strong>49</strong> 行改为自己的 <code>postgresql</code> 数据库，将 localhost 改为本机 IP</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#STATS__BLOCKSCOUT_DB_URL=$&#123;STATS__BLOCKSCOUT_DB_URL:postgresql://blockscout:ceWb1MeLBEeOIfk65gU8EjF8@db:5432/blockscout&#125;</span></span><br><span class="line"></span><br><span class="line">STATS__BLOCKSCOUT_DB_URL=<span class="variable">$&#123;STATS__BLOCKSCOUT_DB_URL:postgresql://YOUR_DBUSER_NAME:YourSecurePassword@YourIPADDR:5432/blockscout&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-修改-user-ops-indexer-yml"><a href="#3-2-修改-user-ops-indexer-yml" class="headerlink" title="3.2 修改 user-ops-indexer.yml"></a>3.2 修改 user-ops-indexer.yml</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano user-ops-indexer.yml</span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>user-ops-indexer.yml</code> 文件的第 <strong>15</strong> 和 <strong>16</strong> 行，替换自己的 <code>postgresql</code> 数据库和本机 IP</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># USER_OPS_INDEXER__INDEXER__RPC_URL=$&#123;USER_OPS_INDEXER__INDEXER__RPC_URL:ws://host.docker.internal:8545/&#125;</span></span><br><span class="line"><span class="comment"># USER_OPS_INDEXER__DATABASE__CONNECT__URL=$&#123;USER_OPS_INDEXER__DATABASE__CONNECT__URL:postgresql://blockscout:ceWb1MeLBEeOIfk65gU8EjF8@db:5432/blockscout&#125;</span></span><br><span class="line"></span><br><span class="line">USER_OPS_INDEXER__INDEXER__RPC_URL=<span class="variable">$&#123;USER_OPS_INDEXER__INDEXER__RPC_URL:-ws://YourIPADDR:8546/&#125;</span></span><br><span class="line">STATS__BLOCKSCOUT_DB_URL=<span class="variable">$&#123;STATS__BLOCKSCOUT_DB_URL:postgresql://YOUR_DBUSER_NAME:YourSecurePassword@YourIPADDR:5432/blockscout&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-删除-explorer-conf-template"><a href="#3-3-删除-explorer-conf-template" class="headerlink" title="3.3 删除 explorer.conf.template"></a>3.3 删除 explorer.conf.template</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../proxy</span><br><span class="line"><span class="built_in">mv</span> explorer.conf.template explorer.conf.template.backup</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-修改-common-stats-yml"><a href="#3-4-修改-common-stats-yml" class="headerlink" title="3.4 修改 common-stats.yml"></a>3.4 修改 common-stats.yml</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ../envs</span><br><span class="line">nano common-stats.env</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>common-stats.yml</code> 的第 <strong>29</strong> 行修改为自己的后端服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># STATS__BLOCKSCOUT_API_URL=http://host.docker.internal</span></span><br><span class="line">STATS__BLOCKSCOUT_API_URL=http://YourIPADDR:4000</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-启动内置微服务"><a href="#3-5-启动内置微服务" class="headerlink" title="3.5 启动内置微服务"></a>3.5 启动内置微服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line">docker-compose -f microservices.yml up -d</span><br><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+
+<p>此时如果 <code>layer2</code> 是启动状态，所有微服务都应该启动成功，如果失败查看 logs <code>docker logs ServiceName</code></p>
+<p><img src="/images/2025/microservice.png" alt="microservice"></p>
+<h3 id="3-6-启动后端服务"><a href="#3-6-启动后端服务" class="headerlink" title="3.6 启动后端服务"></a>3.6 启动后端服务</h3><p>返回 <code>blockscout-backend</code> 根目录并启动 Phoenix 服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/blockscout/backend/</span><br><span class="line">mix phx.server</span><br></pre></td></tr></table></figure>
+
+<p>后端应运行在 <code>http://localhost:4000</code>（或配置的域名）</p>
+<p><img src="/images/2025/backend.png" alt="backend"></p>
+<h2 id="四、构建-Blockscout-Frontend"><a href="#四、构建-Blockscout-Frontend" class="headerlink" title="四、构建 Blockscout Frontend"></a>四、构建 Blockscout Frontend</h2><h3 id="4-1-克隆-Blockscout-Frontend-仓库"><a href="#4-1-克隆-Blockscout-Frontend-仓库" class="headerlink" title="4.1 克隆 Blockscout Frontend 仓库"></a>4.1 克隆 Blockscout Frontend 仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 克隆 blockscout frontend 并切换到最新 release 分支</span></span><br><span class="line"><span class="built_in">cd</span> ~/blockscout</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/blockscout/frontend.git frontend</span><br><span class="line"><span class="built_in">cd</span> frontend</span><br><span class="line">git checkout v2.3.2 -b v2.3.2</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>frontend</code> 目录下新建 <code>.tool-versions</code> 文件并写入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nodejs 22.11.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-在-configs-envs-与根目录下分别创建-env-namepreset-和-env-文件"><a href="#4-2-在-configs-envs-与根目录下分别创建-env-namepreset-和-env-文件" class="headerlink" title="4.2 在 configs&#x2F;envs 与根目录下分别创建 .env.namepreset 和 .env 文件"></a>4.2 在 configs&#x2F;envs 与根目录下分别创建 .env.namepreset 和 .env 文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 应用基础配置</span></span><br><span class="line">NEXT_PUBLIC_APP_HOST=localhost</span><br><span class="line">NEXT_PUBLIC_APP_PORT=3000</span><br><span class="line">NEXT_PUBLIC_APP_INSTANCE=localhost</span><br><span class="line">NEXT_PUBLIC_APP_ENV=development</span><br><span class="line"></span><br><span class="line">NEXT_PUBLIC_API_HOST=localhost</span><br><span class="line">NEXT_PUBLIC_API_PORT=4000</span><br><span class="line">NEXT_PUBLIC_API_PROTOCOL=http</span><br><span class="line">NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL=<span class="string">&#x27;ws&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 微服务配置</span></span><br><span class="line">NEXT_PUBLIC_STATS_API_HOST=http://localhost:8080</span><br><span class="line">NEXT_PUBLIC_VISUALIZE_API_HOST=http://localhost:8081</span><br><span class="line"></span><br><span class="line"><span class="comment"># 首页内容配置</span></span><br><span class="line">NEXT_PUBLIC_HOMEPAGE_CHARTS=[<span class="string">&#x27;daily_txs&#x27;</span>, <span class="string">&#x27;coin_price&#x27;</span>, <span class="string">&#x27;market_cap&#x27;</span>]</span><br><span class="line">NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG=&#123;<span class="string">&quot;background&quot;</span>:[<span class="string">&quot;rgba(27, 74, 221, 1)&quot;</span>]&#125;</span><br><span class="line">NEXT_PUBLIC_HOMEPAGE_STATS=[<span class="string">&#x27;total_blocks&#x27;</span>,<span class="string">&#x27;average_block_time&#x27;</span>,<span class="string">&#x27;total_txs&#x27;</span>,<span class="string">&#x27;wallet_addresses&#x27;</span>,<span class="string">&#x27;gas_tracker&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 广告配置</span></span><br><span class="line">NEXT_PUBLIC_AD_BANNER_PROVIDER=none</span><br><span class="line">NEXT_PUBLIC_AD_TEXT_PROVIDER=none</span><br><span class="line"></span><br><span class="line"><span class="comment"># 区块链网络配置</span></span><br><span class="line">NEXT_PUBLIC_NETWORK_NAME=<span class="string">&quot;YangFan&quot;</span></span><br><span class="line">NEXT_PUBLIC_NETWORK_ID=L2_CHAIN_ID</span><br><span class="line">NEXT_PUBLIC_NETWORK_CURRENCY_NAME=<span class="string">&quot;Sepolia ETH&quot;</span></span><br><span class="line">NEXT_PUBLIC_NETWORK_CURRENCY_SYMBOL=<span class="string">&quot;ETH&quot;</span></span><br><span class="line">NEXT_PUBLIC_NETWORK_CURRENCY_DECIMALS=18</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-启动前端服务"><a href="#4-3-启动前端服务" class="headerlink" title="4.3 启动前端服务"></a>4.3 启动前端服务</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装项目依赖并启动前端调试</span></span><br><span class="line">yarn install</span><br><span class="line">yarn dev:preset namepreset</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调试完成后启动服务</span></span><br><span class="line">yarn build</span><br><span class="line">yarn start</span><br></pre></td></tr></table></figure>
+
+<p>后端应运行在 <code>http://localhost:3000</code>（或配置的域名）</p>
+<p><img src="/images/2025/frontend.png" alt="frontend"></p>
+<p><strong>Hooray！Blockscout 部署成功！</strong></p>
+<h2 id="五、故障排查"><a href="#五、故障排查" class="headerlink" title="五、故障排查"></a>五、故障排查</h2><h3 id="5-1-数据库最大连接数限制"><a href="#5-1-数据库最大连接数限制" class="headerlink" title="5.1 数据库最大连接数限制"></a>5.1 数据库最大连接数限制</h3><p><code>PostgreSQL</code> 的默认最大连接数（max_connections）通常为 <strong>100</strong>，Blockscout 后端和多个微服务会创建大量数据库连接，占用了所有可用连接槽。此时会遇到：<code>FATAL: sorry, too many clients already</code> 之类的错误，此时需要修改数据库默认最大连接数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/postgresql/*/main/postgresql.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max_connections = 500</span><br></pre></td></tr></table></figure>
+
+<p>更改后需要重启 <code>PostgreSQL</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart postgresql</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-JavaScript-heap-out-of-memory"><a href="#5-2-JavaScript-heap-out-of-memory" class="headerlink" title="5.2 JavaScript heap out of memory"></a>5.2 JavaScript heap out of memory</h3><p><code>yarn build</code> 时可能会遇到 <code>JavaScript</code> 内存溢出，此时需要加载环境变量 <code>NODE_OPTIONS</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> NODE_OPTIONS=<span class="string">&quot;--max-old-space-size=4096&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-后端连接数据库失败"><a href="#5-3-后端连接数据库失败" class="headerlink" title="5.3 后端连接数据库失败"></a>5.3 后端连接数据库失败</h3><p>在用户名和密码都正确的前提下数据库连接失败，可能时因为 <code>PostgreSQL</code> 数据库的认证配置限制了密码认证方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/postgresql/17/main/pg_hba.conf</span><br></pre></td></tr></table></figure>
+
+<p>在 <code># IPv4 local connections:</code>下添加</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">host    all             all             0.0.0.0/0               scram-sha-256</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>Blockscout 官方文档: <a target="_blank" rel="noopener" href="https://docs.blockscout.com/setup/deployment/manual-deployment-guide">https://docs.blockscout.com/setup/deployment/manual-deployment-guide</a></li>
+<li>前端仓库: <a target="_blank" rel="noopener" href="https://github.com/blockscout/frontend">https://github.com/blockscout/frontend</a></li>
+<li>后端仓库: <a target="_blank" rel="noopener" href="https://github.com/blockscout/blockscout">https://github.com/blockscout/blockscout</a></li>
+</ul>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/09/15/op-stack-deployment-part1/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Blockscout/" title="Blockscout">
+                        #Blockscout
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Layer2/" title="Layer2">
+                        #Layer2
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">一、系统环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E4%BE%9D%E8%B5%96"><span class="toc-text">1.1 安装软件依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E9%85%8D%E7%BD%AE-asdf"><span class="toc-text">1.2 配置 asdf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E9%85%8D%E7%BD%AE-Postgres-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-text">1.3 配置 Postgres 数据库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E5%BB%BA-Blockscout-Backend"><span class="toc-text">二、构建 Blockscout Backend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%85%8B%E9%9A%86-Blockscout-Backend-%E4%BB%93%E5%BA%93"><span class="toc-text">2.1 克隆 Blockscout Backend 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E7%BC%96%E8%BE%91%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6"><span class="toc-text">2.2 编辑环境变量文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%AE%89%E8%A3%85-Blockscout-Backend-%E5%86%85%E7%BD%AE%E5%89%8D%E7%AB%AF%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="toc-text">2.3 安装 Blockscout Backend 内置前端静态资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%BF%90%E8%A1%8C%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-text">三、运行微服务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BF%AE%E6%94%B9-stats-yml"><span class="toc-text">3.1 修改 stats.yml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BF%AE%E6%94%B9-user-ops-indexer-yml"><span class="toc-text">3.2 修改 user-ops-indexer.yml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%88%A0%E9%99%A4-explorer-conf-template"><span class="toc-text">3.3 删除 explorer.conf.template</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E4%BF%AE%E6%94%B9-common-stats-yml"><span class="toc-text">3.4 修改 common-stats.yml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E5%90%AF%E5%8A%A8%E5%86%85%E7%BD%AE%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-text">3.5 启动内置微服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E5%90%AF%E5%8A%A8%E5%90%8E%E7%AB%AF%E6%9C%8D%E5%8A%A1"><span class="toc-text">3.6 启动后端服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%9E%84%E5%BB%BA-Blockscout-Frontend"><span class="toc-text">四、构建 Blockscout Frontend</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%85%8B%E9%9A%86-Blockscout-Frontend-%E4%BB%93%E5%BA%93"><span class="toc-text">4.1 克隆 Blockscout Frontend 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E5%9C%A8-configs-envs-%E4%B8%8E%E6%A0%B9%E7%9B%AE%E5%BD%95%E4%B8%8B%E5%88%86%E5%88%AB%E5%88%9B%E5%BB%BA-env-namepreset-%E5%92%8C-env-%E6%96%87%E4%BB%B6"><span class="toc-text">4.2 在 configs&#x2F;envs 与根目录下分别创建 .env.namepreset 和 .env 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%90%AF%E5%8A%A8%E5%89%8D%E7%AB%AF%E6%9C%8D%E5%8A%A1"><span class="toc-text">4.3 启动前端服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5"><span class="toc-text">五、故障排查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9C%80%E5%A4%A7%E8%BF%9E%E6%8E%A5%E6%95%B0%E9%99%90%E5%88%B6"><span class="toc-text">5.1 数据库最大连接数限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-JavaScript-heap-out-of-memory"><span class="toc-text">5.2 JavaScript heap out of memory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E5%90%8E%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5"><span class="toc-text">5.3 后端连接数据库失败</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Layer2%20%E2%80%94%E2%80%94%20Blockscout%20%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F17%2Fblockscout-deployment-part2%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

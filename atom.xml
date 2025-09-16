@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-15T14:27:15.111Z</updated>
+  <updated>2025-09-16T16:33:52.028Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -17,11 +17,36 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Layer2 —— Blockscout 部署指南</title>
+    <link href="https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/"/>
+    <id>https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/</id>
+    <published>2025-09-16T16:23:18.000Z</published>
+    <updated>2025-09-16T16:33:52.028Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;一、系统环境准备&quot;&gt;&lt;a href=&quot;#一、系统环境准备&quot; class=&quot;headerlink&quot; title=&quot;一、系统环境准备&quot;&gt;&lt;/a&gt;一、系统环境准备&lt;/h2&gt;&lt;h3 id=&quot;1-1-安装软件依赖&quot;&gt;&lt;a href=&quot;#1-1-安装软件依赖&quot;</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Blockscout" scheme="https://faniyang.github.io/tags/Blockscout/"/>
+    
+    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Layer2 —— OP Stack 部署指南</title>
     <link href="https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/"/>
     <id>https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/</id>
     <published>2025-09-15T09:54:48.000Z</published>
-    <updated>2025-09-15T14:27:15.111Z</updated>
+    <updated>2025-09-16T16:28:43.854Z</updated>
     
     
       
@@ -36,6 +61,8 @@
     
     
     <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
+    
+    <category term="OPStack" scheme="https://faniyang.github.io/tags/OPStack/"/>
     
   </entry>
   
