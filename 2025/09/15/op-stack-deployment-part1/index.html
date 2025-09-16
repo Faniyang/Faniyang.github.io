@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Layer2 —— OP Stack 部署指南 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Layer2 —— OP Stack 部署指南</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Layer2/" title="Layer2">
+                    #Layer2
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="一、准备系统环境"><a href="#一、准备系统环境" class="headerlink" title="一、准备系统环境"></a>一、准备系统环境</h2><h3 id="1-1-安装-Ubuntu"><a href="#1-1-安装-Ubuntu" class="headerlink" title="1.1 安装 Ubuntu"></a>1.1 安装 Ubuntu</h3><p>打开 Windows PowerShell 终端</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看可用的 Ubuntu 发行版</span></span><br><span class="line">wsl <span class="literal">--list</span> <span class="literal">--online</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装指定版本的 Ubuntu</span></span><br><span class="line">wsl <span class="literal">--install</span> <span class="literal">-d</span> Ubuntu<span class="literal">-24</span>.<span class="number">04</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-安装软件依赖"><a href="#1-2-安装软件依赖" class="headerlink" title="1.2 安装软件依赖"></a>1.2 安装软件依赖</h3><p>打开 Ubuntu-24.04 子系统（在安装 pnpm 和 mise 时，需修改自己环境变量加载的路径）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新系统</span></span><br><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt upgrade -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装基础依赖</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y curl wget git build-essential</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 go</span></span><br><span class="line">wget https://go.dev/dl/go1.25.0.linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">sudo</span> tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">rm</span> go1.25.0.linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&#x27;\n# Go Language\nexport PATH=$PATH:/usr/local/go/bin&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 node.js</span></span><br><span class="line">curl -fsSL https://deb.nodesource.com/setup_22.x | <span class="built_in">sudo</span> -E bash -</span><br><span class="line"><span class="built_in">sudo</span> apt-get install -y nodejs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 pnpm</span></span><br><span class="line">curl -fsSL https://get.pnpm.io/install.sh | sh</span><br><span class="line"><span class="built_in">source</span> /home/eth/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 foundry</span></span><br><span class="line">curl -L https://foundry.paradigm.xyz | bash</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">~/.foundry/bin/foundryup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 make</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y make</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 jq</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y jq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 direnv</span></span><br><span class="line"><span class="built_in">sudo</span> apt install -y direnv</span><br><span class="line"><span class="built_in">echo</span> -e <span class="string">&#x27;\n# Direnv hook\neval &quot;$(direnv hook bash)&quot;&#x27;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 just</span></span><br><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y</span><br><span class="line">. <span class="string">&quot;<span class="variable">$HOME</span>/.cargo/env&quot;</span></span><br><span class="line">cargo install just</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 mise</span></span><br><span class="line">curl https://mise.run | sh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;eval \&quot;\$(/home/eth/.local/bin/mise activate bash)\&quot;&quot;</span> &gt;&gt; ~/.bashrc</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-验证安装"><a href="#1-3-验证安装" class="headerlink" title="1.3 验证安装"></a>1.3 验证安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查所需软件依赖是否正确安装</span></span><br><span class="line">git --version			<span class="comment"># git version 2.43.0</span></span><br><span class="line">go version		        <span class="comment"># go version go1.25.0 linux/amd64</span></span><br><span class="line">node --version 			<span class="comment"># v22.19.0</span></span><br><span class="line">pnpm --version			<span class="comment"># 10.16.1</span></span><br><span class="line">forge --version			<span class="comment"># forge Version: 1.3.5-stable</span></span><br><span class="line">make --version			<span class="comment"># GNU Make 4.3</span></span><br><span class="line">jq --version			<span class="comment"># jq-1.7</span></span><br><span class="line">direnv --version		<span class="comment"># 2.32.1</span></span><br><span class="line">rustc --version			<span class="comment"># rustc 1.89.0 (29483883e 2025-08-04)</span></span><br><span class="line">just --version			<span class="comment"># just 1.42.4</span></span><br><span class="line">mise --version			<span class="comment"># 2025.9.10 linux-x64 (2025-09-13)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="二、获取-Sepolia-测试网资源"><a href="#二、获取-Sepolia-测试网资源" class="headerlink" title="二、获取 Sepolia 测试网资源"></a>二、获取 Sepolia 测试网资源</h2><h3 id="2-1-获取-Sepolia-RPC-URL"><a href="#2-1-获取-Sepolia-RPC-URL" class="headerlink" title="2.1 获取 Sepolia RPC URL"></a>2.1 获取 Sepolia RPC URL</h3><p>从以下服务之一获取 Sepolia RPC URL:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.alchemy.com/">Alchemy</a>（推荐）</li>
+<li><a target="_blank" rel="noopener" href="https://www.quicknode.com/">QuickNode</a></li>
+<li><a target="_blank" rel="noopener" href="https://zan.top/">ZAN</a></li>
+</ul>
+<h3 id="2-2-获取测试-ETH"><a href="#2-2-获取测试-ETH" class="headerlink" title="2.2 获取测试 ETH"></a>2.2 获取测试 ETH</h3><p>在以下链接中获取测试币 SepoliaETH。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://console.optimism.io/faucet">Superchain Faucet</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.google.com/application/web3/faucet/ethereum/sepolia">Google Ethereum Sepolia Faucet</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.alchemy.com/faucets/ethereum-sepolia">Alchemy Ethereum Sepolia Faucet</a></li>
+</ul>
+<h2 id="三、构建-OP-Stack-组件"><a href="#三、构建-OP-Stack-组件" class="headerlink" title="三、构建 OP-Stack 组件"></a>三、构建 OP-Stack 组件</h2><h3 id="3-1-克隆-optimism-和-op-geth-仓库"><a href="#3-1-克隆-optimism-和-op-geth-仓库" class="headerlink" title="3.1 克隆 optimism 和 op-geth 仓库"></a>3.1 克隆 optimism 和 op-geth 仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 克隆 optimism 并切换到最新 release 分支</span></span><br><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ethereum-optimism/optimism.git</span><br><span class="line"><span class="built_in">cd</span> optimism</span><br><span class="line">git checkout v1.13.6 -b v1.13.6</span><br><span class="line"></span><br><span class="line"><span class="comment"># 克隆 op-geth 到 optimism 目录下并切换到最新 release 分支</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ethereum-optimism/op-geth.git</span><br><span class="line"><span class="built_in">cd</span> op-geth</span><br><span class="line">git checkout v1.101602.0 -b v1.101602.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-构建-op-geth，op-node，op-batcher，op-proposer"><a href="#3-2-构建-op-geth，op-node，op-batcher，op-proposer" class="headerlink" title="3.2 构建 op-geth，op-node，op-batcher，op-proposer"></a>3.2 构建 op-geth，op-node，op-batcher，op-proposer</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism/op-geth</span><br><span class="line">make geth</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ..</span><br><span class="line">make op-node op-batcher op-proposer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查组件是否构建成功</span></span><br><span class="line">./op-geth/build/bin/geth --version</span><br><span class="line">./op-node/bin/op-node --version</span><br><span class="line">./op-batcher/bin/op-batcher --version</span><br><span class="line">./op-proposer/bin/op-proposer --version</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、配置环境变量"><a href="#四、配置环境变量" class="headerlink" title="四、配置环境变量"></a>四、配置环境变量</h2><h3 id="4-1-生成账户"><a href="#4-1-生成账户" class="headerlink" title="4.1 生成账户"></a>4.1 生成账户</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism</span><br><span class="line">./packages/contracts-bedrock/scripts/getting-started/wallets.sh</span><br></pre></td></tr></table></figure>
+
+<p>此命令会生成五个地址及其私钥：</p>
+<ul>
+<li><code>Admin</code>（管理员）</li>
+<li><code>Batcher</code>（批处理者）</li>
+<li><code>Proposer</code>（提议者）</li>
+<li><code>Sequencer</code>（排序者）</li>
+<li><code>Challenger</code>（挑战者）</li>
+</ul>
+<h3 id="4-2-编辑环境变量文件"><a href="#4-2-编辑环境变量文件" class="headerlink" title="4.2 编辑环境变量文件"></a>4.2 编辑环境变量文件</h3><p>创建<code>.envrc</code> 文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano .envrc</span><br></pre></td></tr></table></figure>
+
+<p>填写以下变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Admin account</span></span><br><span class="line"><span class="built_in">export</span> GS_ADMIN_ADDRESS=</span><br><span class="line"><span class="built_in">export</span> GS_ADMIN_PRIVATE_KEY=</span><br><span class="line"></span><br><span class="line"><span class="comment"># Batcher account</span></span><br><span class="line"><span class="built_in">export</span> GS_BATCHER_ADDRESS=</span><br><span class="line"><span class="built_in">export</span> GS_BATCHER_PRIVATE_KEY=</span><br><span class="line"></span><br><span class="line"><span class="comment"># Proposer account</span></span><br><span class="line"><span class="built_in">export</span> GS_PROPOSER_ADDRESS=</span><br><span class="line"><span class="built_in">export</span> GS_PROPOSER_PRIVATE_KEY=</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sequencer account</span></span><br><span class="line"><span class="built_in">export</span> GS_SEQUENCER_ADDRESS=</span><br><span class="line"><span class="built_in">export</span> GS_SEQUENCER_PRIVATE_KEY=</span><br><span class="line"></span><br><span class="line"><span class="comment"># Challenger account</span></span><br><span class="line"><span class="built_in">export</span> GS_CHALLENGER_ADDRESS=</span><br><span class="line"><span class="built_in">export</span> GS_CHALLENGER_PRIVATE_KEY=</span><br><span class="line"></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"><span class="comment">#            Layer1 RPC Configuration            #</span></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># RPC URL for the L1 network to interact with</span></span><br><span class="line"><span class="built_in">export</span> L1_RPC_URL=</span><br><span class="line"><span class="built_in">export</span> L1_BEACON_URL=<span class="string">&quot;https://ethereum-sepolia-beacon-api.publicnode.com&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The kind of RPC provider, used to inform optimal transactions receipts</span></span><br><span class="line"><span class="comment"># fetching. Valid options: alchemy, quicknode, infura, parity, nethermind,</span></span><br><span class="line"><span class="comment"># debug_geth, erigon, basic, any.</span></span><br><span class="line"><span class="built_in">export</span> L1_RPC_KIND=</span><br><span class="line"></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"><span class="comment">#               Chain Configuration              #</span></span><br><span class="line"><span class="comment">##################################################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The unique chain ID of the Layer 1 network(e.g., Sepolia = 11155111)</span></span><br><span class="line"><span class="built_in">export</span> L1_CHAIN_ID=11155111</span><br><span class="line"><span class="comment"># The unique chain ID you assign to your Layer 2 network (custom value)</span></span><br><span class="line"><span class="built_in">export</span> L2_CHAIN_ID=</span><br><span class="line"><span class="comment"># The average block time of the Layer 1 network (in seconds)</span></span><br><span class="line"><span class="built_in">export</span> L1_BLOCK_TIME=12</span><br><span class="line"><span class="comment"># The block time you configure for your Layer 2 network (in seconds)</span></span><br><span class="line"><span class="built_in">export</span> L2_BLOCK_TIME=2</span><br></pre></td></tr></table></figure>
+
+<p>保存文件(Ctrl+O, Enter, Ctrl+X)</p>
+<h3 id="4-3-加载环境变量"><a href="#4-3-加载环境变量" class="headerlink" title="4.3 加载环境变量"></a>4.3 加载环境变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">direnv allow</span><br></pre></td></tr></table></figure>
+
+<p>验证环境变量是否加载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== 环境变量检查 ===&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;GS_ADMIN_ADDRESS: <span class="variable">$GS_ADMIN_ADDRESS</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;GS_BATCHER_ADDRESS: <span class="variable">$GS_BATCHER_ADDRESS</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;GS_PROPOSER_ADDRESS: <span class="variable">$GS_PROPOSER_ADDRESS</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;GS_SEQUENCER_ADDRESS: <span class="variable">$GS_SEQUENCER_ADDRESS</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;GS_CHALLENGER_ADDRESS: <span class="variable">$GS_CHALLENGER_ADDRESS</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1_RPC_KIND: <span class="variable">$L1_RPC_KIND</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1_RPC_URL: <span class="variable">$L1_RPC_URL</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1_BEACON_URL: <span class="variable">$L1_BEACON_URL</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1_CHAIN_ID: <span class="variable">$L1_CHAIN_ID</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L2_CHAIN_ID: <span class="variable">$L2_CHAIN_ID</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1_BLOCK_TIME: <span class="variable">$L1_BLOCK_TIME</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L2_BLOCK_TIME: <span class="variable">$L2_BLOCK_TIME</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-为账户充值"><a href="#4-4-为账户充值" class="headerlink" title="4.4 为账户充值"></a>4.4 为账户充值</h3><p>为以下地址充值 SepoliaETH：</p>
+<ul>
+<li><code>Admin</code> — 0.5 SepoliaETH</li>
+<li><code>Batcher</code> — 0.1 SepoliaETH</li>
+<li><code>Proposer</code> — 0.2 SepoliaETH</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看账户余额</span></span><br><span class="line">cast balance <span class="variable">$GS_ADMIN_ADDRESS</span> --rpc-url <span class="variable">$L1_RPC_URL</span></span><br><span class="line">cast balance <span class="variable">$GS_BATCHER_ADDRESS</span> --rpc-url <span class="variable">$L1_RPC_URL</span></span><br><span class="line">cast balance <span class="variable">$GS_PROPOSER_ADDRESS</span> --rpc-url <span class="variable">$L1_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、部署-L1-合约"><a href="#五、部署-L1-合约" class="headerlink" title="五、部署 L1 合约"></a>五、部署 L1 合约</h2><h3 id="5-1-获取-op-deployer"><a href="#5-1-获取-op-deployer" class="headerlink" title="5.1 获取 op-deployer"></a>5.1 获取 op-deployer</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism</span><br><span class="line"><span class="built_in">mkdir</span> -p bin</span><br><span class="line">wget https://github.com/ethereum-optimism/optimism/releases/download/op-deployer%2Fv0.2.6/op-deployer-0.2.6-linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">sudo</span> tar -C ./bin -xzf op-deployer-0.2.6-linux-amd64.tar.gz --strip-components=1</span><br><span class="line"><span class="built_in">rm</span> op-deployer-0.2.6-linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证是否下载解压成功</span></span><br><span class="line">./bin/op-deployer --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-初始化-op-deployer-配置"><a href="#5-2-初始化-op-deployer-配置" class="headerlink" title="5.2 初始化 op-deployer 配置"></a>5.2 初始化 op-deployer 配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p ~/.deployer</span><br><span class="line">./bin/op-deployer init --l1-chain-id <span class="variable">$L1_CHAIN_ID</span> --l2-chain-ids <span class="variable">$L2_CHAIN_ID</span> --workdir .deployer</span><br></pre></td></tr></table></figure>
+
+<p>此命令会生成 <code>intend.json</code> 和 <code>state.json</code></p>
+<h3 id="5-3-修改-intend-json-配置"><a href="#5-3-修改-intend-json-配置" class="headerlink" title="5.3 修改 intend.json 配置"></a>5.3 修改 intend.json 配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nano .deployer/intent.toml</span><br></pre></td></tr></table></figure>
+
+<p>确保配置中包含以下内容并替换相应的地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">configType = <span class="string">&quot;standard&quot;</span></span><br><span class="line">l1ChainID = 11155111</span><br><span class="line">opcmAddress = <span class="string">&quot;0x6b6f9129efb1b7a48f84e3b787333d1dca02ee34&quot;</span>	<span class="comment"># L1 上的 OP Chain Manager 合约地址</span></span><br><span class="line">fundDevAccounts = <span class="literal">false</span></span><br><span class="line">useInterop = <span class="literal">false</span></span><br><span class="line">l1ContractsLocator = <span class="string">&quot;tag://op-contracts/v2.2.0&quot;</span></span><br><span class="line">l2ContractsLocator = <span class="string">&quot;tag://op-contracts/v1.7.0-beta.1+l2-contracts&quot;</span></span><br><span class="line"></span><br><span class="line">[[chains]]</span><br><span class="line">  <span class="built_in">id</span> = <span class="string">&quot;0x00000000000000000000000000000000000000000000000000000000004f5da2&quot;</span>	<span class="comment"># L2_CHAIN_ID 的十六进制</span></span><br><span class="line">  baseFeeVaultRecipient = <span class="string">&quot;YOUR_ADMIN_ADDRESS&quot;</span></span><br><span class="line">  l1FeeVaultRecipient = <span class="string">&quot;YOUR_ADMIN_ADDRESS&quot;</span></span><br><span class="line">  sequencerFeeVaultRecipient = <span class="string">&quot;YOUR_ADMIN_ADDRESS&quot;</span></span><br><span class="line">  eip1559DenominatorCanyon = 250</span><br><span class="line">  eip1559Denominator = 50</span><br><span class="line">  eip1559Elasticity = 6</span><br><span class="line">  [chains.roles]</span><br><span class="line">    l1ProxyAdminOwner = <span class="string">&quot;0x1eb2ffc903729a0f03966b917003800b145f56e2&quot;</span></span><br><span class="line">    l2ProxyAdminOwner = <span class="string">&quot;0x2fc3ffc903729a0f03966b917003800b145f67f3&quot;</span></span><br><span class="line">    systemConfigOwner = <span class="string">&quot;YOUR_ADMIN_ADDRESS&quot;</span></span><br><span class="line">    unsafeBlockSigner = <span class="string">&quot;YOUR_SEQUENCER_ADDRESS&quot;</span></span><br><span class="line">    batcher = <span class="string">&quot;YOUR_BATCHER_ADDRESS&quot;</span></span><br><span class="line">    proposer = <span class="string">&quot;YOUR_PROPOSER_ADDRESS&quot;</span></span><br><span class="line">    challenger = <span class="string">&quot;0xfd1d2e729ae8eee2e146c033bf4400fe75284301&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-4-部署-L1-合约"><a href="#5-4-部署-L1-合约" class="headerlink" title="5.4 部署 L1 合约"></a>5.4 部署 L1 合约</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查询 L1 gas fee，判断 L1 RPC 是否连接成功</span></span><br><span class="line">cast gas-price --rpc-url <span class="variable">$L1_RPC_URL</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署合约</span></span><br><span class="line">./bin/op-deployer apply --workdir .deployer --l1-rpc-url <span class="variable">$L1_RPC_URL</span> --private-key <span class="variable">$GS_ADMIN_PRIVATE_KEY</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-5-生成-L2-配置文件"><a href="#5-5-生成-L2-配置文件" class="headerlink" title="5.5 生成 L2 配置文件"></a>5.5 生成 L2 配置文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 genesis.json（用于 op-geth）</span></span><br><span class="line">./bin/op-deployer inspect genesis --workdir .deployer <span class="variable">$L2_CHAIN_ID</span> &gt; .deployer/genesis.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成 rollup.json（用于 op-node）</span></span><br><span class="line">./bin/op-deployer inspect rollup --workdir .deployer <span class="variable">$L2_CHAIN_ID</span> &gt; .deployer/rollup.json</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、启动-Layer2"><a href="#六、启动-Layer2" class="headerlink" title="六、启动 Layer2"></a>六、启动 Layer2</h2><h3 id="6-1-初始化并启动-op-geth"><a href="#6-1-初始化并启动-op-geth" class="headerlink" title="6.1 初始化并启动 op-geth"></a>6.1 初始化并启动 op-geth</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 jwt 密钥用于 op-geth 与 op-node 通信</span></span><br><span class="line"><span class="built_in">cd</span> ~/optimism/op-geth</span><br><span class="line">openssl rand -hex 32 &gt; jwt.txt</span><br><span class="line"><span class="built_in">cp</span> jwt.txt ../op-node/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 op-geth</span></span><br><span class="line"><span class="built_in">mkdir</span> -p datadir</span><br><span class="line">build/bin/geth init --state.scheme=<span class="built_in">hash</span> --datadir=datadir ../.deployer/genesis.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#启动 op-geth</span></span><br><span class="line">./build/bin/geth \</span><br><span class="line">	--datadir ./datadir \</span><br><span class="line">	--http \</span><br><span class="line">    --http.corsdomain=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.addr=0.0.0.0 \</span><br><span class="line">    --http.api=web3,debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --ws \</span><br><span class="line">    --ws.addr=0.0.0.0 \</span><br><span class="line">    --ws.port=8546 \</span><br><span class="line">    --ws.origins=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --ws.api=debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --syncmode=full \</span><br><span class="line">    --gcmode=archive \</span><br><span class="line">    --nodiscover \</span><br><span class="line">    --maxpeers=0 \</span><br><span class="line">    --networkid=<span class="variable">$L2_CHAIN_ID</span> \</span><br><span class="line">    --authrpc.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --authrpc.addr=0.0.0.0 \</span><br><span class="line">    --authrpc.port=8551 \</span><br><span class="line">    --authrpc.jwtsecret=./jwt.txt \</span><br><span class="line">    --rollup.disabletxpoolgossip=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-启动-op-node"><a href="#6-2-启动-op-node" class="headerlink" title="6.2 启动 op-node"></a>6.2 启动 op-node</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism/op-node</span><br><span class="line"></span><br><span class="line">./bin/op-node \</span><br><span class="line">	--l2=http://localhost:8551 \</span><br><span class="line">	--l2.jwt-secret=./jwt.txt \</span><br><span class="line">	--sequencer.enabled \</span><br><span class="line">	--sequencer.l1-confs=5 \</span><br><span class="line">	--verifier.l1-confs=4 \</span><br><span class="line">	--rollup.config=../.deployer/rollup.json \</span><br><span class="line">	--rpc.addr=0.0.0.0 \</span><br><span class="line">	--rpc.port=9545 \</span><br><span class="line">	--p2p.disable \</span><br><span class="line">	--rpc.enable-admin \</span><br><span class="line">	--p2p.sequencer.key=<span class="variable">$GS_SEQUENCER_PRIVATE_KEY</span> \</span><br><span class="line">	--l1=<span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">	--l1.rpckind=<span class="variable">$L1_RPC_KIND</span> \</span><br><span class="line">	--l1.beacon=<span class="variable">$L1_BEACON_URL</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-启动-op-batcher"><a href="#6-3-启动-op-batcher" class="headerlink" title="6.3 启动 op-batcher"></a>6.3 启动 op-batcher</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism/op-batcher</span><br><span class="line"></span><br><span class="line">./bin/op-batcher \</span><br><span class="line">	--l2-eth-rpc=http://localhost:8545 \</span><br><span class="line">	--rollup-rpc=http://localhost:9545 \</span><br><span class="line">	--poll-interval=1s \</span><br><span class="line">	--sub-safety-margin=6 \</span><br><span class="line">	--num-confirmations=1 \</span><br><span class="line">	--safe-abort-nonce-too-low-count=3 \</span><br><span class="line">	--resubmission-timeout=30s \</span><br><span class="line">	--rpc.addr=0.0.0.0 \</span><br><span class="line">	--rpc.port=8548 \</span><br><span class="line">	--rpc.enable-admin \</span><br><span class="line">	--max-channel-duration=25 \</span><br><span class="line">	--l1-eth-rpc=<span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">	--private-key=<span class="variable">$GS_BATCHER_PRIVATE_KEY</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-启动-op-proposer"><a href="#6-4-启动-op-proposer" class="headerlink" title="6.4 启动 op-proposer"></a>6.4 启动 op-proposer</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载 op-proposer 配置变量（也可加到 .envrc 里面）</span></span><br><span class="line"><span class="built_in">export</span> OP_PROPOSER_WAIT_NODE_SYNC=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> OP_PROPOSER_PROPOSAL_INTERVAL=15m</span><br><span class="line"><span class="built_in">export</span> OP_PROPOSER_GAME_FACTORY_ADDRESS=$(<span class="built_in">cat</span> ~/.deployer/state.json | jq -r <span class="string">&#x27;.opChainDeployments[0].disputeGameFactoryProxyAddress&#x27;</span>)</span><br><span class="line"><span class="built_in">export</span> OP_PROPOSER_GAME_TYPE=1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> ~/optimism/op-proposer</span><br><span class="line"></span><br><span class="line">./bin/op-proposer \</span><br><span class="line">  --poll-interval=12s \</span><br><span class="line">  --rpc.port=8560 \</span><br><span class="line">  --rollup-rpc=http://localhost:9545 \</span><br><span class="line">  --private-key=<span class="variable">$GS_PROPOSER_PRIVATE_KEY</span> \</span><br><span class="line">  --l1-eth-rpc=<span class="variable">$L1_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="七、验证部署"><a href="#七、验证部署" class="headerlink" title="七、验证部署"></a>七、验证部署</h2><h3 id="7-1-检查-L2-链状态"><a href="#7-1-检查-L2-链状态" class="headerlink" title="7.1 检查 L2 链状态"></a>7.1 检查 L2 链状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">  --data <span class="string">&#x27;&#123;&quot;jsonrpc&quot;:&quot;2.0&quot;,&quot;method&quot;:&quot;eth_blockNumber&quot;,&quot;params&quot;:[],&quot;id&quot;:1&#125;&#x27;</span> \</span><br><span class="line">  <span class="variable">$L2_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-连接钱包到-Layer2"><a href="#7-2-连接钱包到-Layer2" class="headerlink" title="7.2 连接钱包到 Layer2"></a>7.2 连接钱包到 Layer2</h3><p>在 MetaMask 中添加自定义网络：</p>
+<ul>
+<li>网络名称：OP Stack Rollup</li>
+<li>RPC URL：<a target="_blank" rel="noopener" href="http://localhost:8545/">http://localhost:8545</a></li>
+<li>链 ID：L2_CHAIN_ID</li>
+<li>符号：ETH</li>
+</ul>
+<h3 id="7-3-将-SepoliaETH-发送到-Bridge-合约"><a href="#7-3-将-SepoliaETH-发送到-Bridge-合约" class="headerlink" title="7.3 将 SepoliaETH 发送到 Bridge 合约"></a>7.3 将 SepoliaETH 发送到 Bridge 合约</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取 L1StandardBridge 地址</span></span><br><span class="line">L1StandardBridge=$(<span class="built_in">cat</span> ~/optimism/.deployer/state.json | jq -r <span class="string">&#x27;.opChainDeployments[0].l1StandardBridgeProxyAddress&#x27;</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;L1StandardBridge 地址: <span class="variable">$L1StandardBridge</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>通过 Metamask 向你的 <strong>桥接地址</strong> 发送(0.0001 SepoliaETH)，发送成功后大约需要 5 分钟才能在 Layer2 上看到 ETH.</p>
+<h2 id="八、基本转账-CLI-操作实例"><a href="#八、基本转账-CLI-操作实例" class="headerlink" title="八、基本转账 CLI 操作实例"></a>八、基本转账 CLI 操作实例</h2><h3 id="8-1-从-L1-的-Admin-桥接到-L2-的-admin"><a href="#8-1-从-L1-的-Admin-桥接到-L2-的-admin" class="headerlink" title="8.1 从 L1 的 Admin 桥接到 L2 的 admin"></a>8.1 从 L1 的 Admin 桥接到 L2 的 admin</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cast send <span class="variable">$L1StandardBridge</span> \</span><br><span class="line">  --rpc-url <span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">  --private-key <span class="variable">$GS_ADMIN_PRIVATE_KEY</span> \</span><br><span class="line">  --value 0.0001ether \</span><br><span class="line">  <span class="string">&quot;depositETH(uint32,bytes)&quot;</span> \</span><br><span class="line">  200000 \</span><br><span class="line">  <span class="string">&quot;0x&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Admin L1 和 L2 的余额</span></span><br><span class="line">cast balance <span class="variable">$GS_ADMIN_ADDRESS</span> --rpc-url <span class="variable">$L1_RPC_URL</span></span><br><span class="line">cast balance <span class="variable">$GS_ADMIN_ADDRESS</span> --rpc-url <span class="variable">$L2_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-从-L1-的-Admin-桥接到-L2-的-Batcher"><a href="#8-2-从-L1-的-Admin-桥接到-L2-的-Batcher" class="headerlink" title="8.2 从 L1 的 Admin 桥接到 L2 的 Batcher"></a>8.2 从 L1 的 Admin 桥接到 L2 的 Batcher</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cast send <span class="variable">$L1StandardBridge</span> \</span><br><span class="line">  --rpc-url <span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">  --private-key <span class="variable">$GS_ADMIN_PRIVATE_KEY</span> \</span><br><span class="line">  --value 0.0001ether \</span><br><span class="line">  <span class="string">&quot;depositETHTo(address,uint32,bytes)&quot;</span> \</span><br><span class="line">  <span class="variable">$GS_BATCHER_ADDRESS</span> \</span><br><span class="line">  200000 \</span><br><span class="line">  <span class="string">&quot;0x&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Admin L1 和 Batcher L2 的余额</span></span><br><span class="line">cast balance <span class="variable">$GS_ADMIN_ADDRESS</span> --rpc-url <span class="variable">$L1_RPC_URL</span></span><br><span class="line">cast balance <span class="variable">$GS_BATCHER_ADDRESS</span> --rpc-url <span class="variable">$L2_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-L2-转账"><a href="#8-3-L2-转账" class="headerlink" title="8.3 L2 转账"></a>8.3 L2 转账</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># L2 从 Batcher 转账到 Admin</span></span><br><span class="line">cast send <span class="variable">$GS_ADMIN_ADDRESS</span> \</span><br><span class="line">  --rpc-url <span class="variable">$L2_RPC_URL</span> \</span><br><span class="line">  --private-key <span class="variable">$GS_BATCHER_PRIVATE_KEY</span> \</span><br><span class="line">  --value 0.00001ether</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Admin L2 和 Batcher L2 的余额</span></span><br><span class="line">cast balance <span class="variable">$GS_ADMIN_ADDRESS</span> --rpc-url <span class="variable">$L2_RPC_URL</span></span><br><span class="line">cast balance <span class="variable">$GS_BATCHER_ADDRESS</span> --rpc-url <span class="variable">$L2_RPC_URL</span></span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/02/22/taichi-28/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Layer2/" title="Layer2">
+                        #Layer2
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%87%86%E5%A4%87%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="toc-text">一、准备系统环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%AE%89%E8%A3%85-Ubuntu"><span class="toc-text">1.1 安装 Ubuntu</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E4%BE%9D%E8%B5%96"><span class="toc-text">1.2 安装软件依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="toc-text">1.3 验证安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%8E%B7%E5%8F%96-Sepolia-%E6%B5%8B%E8%AF%95%E7%BD%91%E8%B5%84%E6%BA%90"><span class="toc-text">二、获取 Sepolia 测试网资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96-Sepolia-RPC-URL"><span class="toc-text">2.1 获取 Sepolia RPC URL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%8E%B7%E5%8F%96%E6%B5%8B%E8%AF%95-ETH"><span class="toc-text">2.2 获取测试 ETH</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%9E%84%E5%BB%BA-OP-Stack-%E7%BB%84%E4%BB%B6"><span class="toc-text">三、构建 OP-Stack 组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%85%8B%E9%9A%86-optimism-%E5%92%8C-op-geth-%E4%BB%93%E5%BA%93"><span class="toc-text">3.1 克隆 optimism 和 op-geth 仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E6%9E%84%E5%BB%BA-op-geth%EF%BC%8Cop-node%EF%BC%8Cop-batcher%EF%BC%8Cop-proposer"><span class="toc-text">3.2 构建 op-geth，op-node，op-batcher，op-proposer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">四、配置环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E7%94%9F%E6%88%90%E8%B4%A6%E6%88%B7"><span class="toc-text">4.1 生成账户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%BC%96%E8%BE%91%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%96%87%E4%BB%B6"><span class="toc-text">4.2 编辑环境变量文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%8A%A0%E8%BD%BD%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">4.3 加载环境变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E4%B8%BA%E8%B4%A6%E6%88%B7%E5%85%85%E5%80%BC"><span class="toc-text">4.4 为账户充值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%83%A8%E7%BD%B2-L1-%E5%90%88%E7%BA%A6"><span class="toc-text">五、部署 L1 合约</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E8%8E%B7%E5%8F%96-op-deployer"><span class="toc-text">5.1 获取 op-deployer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%88%9D%E5%A7%8B%E5%8C%96-op-deployer-%E9%85%8D%E7%BD%AE"><span class="toc-text">5.2 初始化 op-deployer 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E4%BF%AE%E6%94%B9-intend-json-%E9%85%8D%E7%BD%AE"><span class="toc-text">5.3 修改 intend.json 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E9%83%A8%E7%BD%B2-L1-%E5%90%88%E7%BA%A6"><span class="toc-text">5.4 部署 L1 合约</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E7%94%9F%E6%88%90-L2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">5.5 生成 L2 配置文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%90%AF%E5%8A%A8-Layer2"><span class="toc-text">六、启动 Layer2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%B9%B6%E5%90%AF%E5%8A%A8-op-geth"><span class="toc-text">6.1 初始化并启动 op-geth</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%90%AF%E5%8A%A8-op-node"><span class="toc-text">6.2 启动 op-node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E5%90%AF%E5%8A%A8-op-batcher"><span class="toc-text">6.3 启动 op-batcher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E5%90%AF%E5%8A%A8-op-proposer"><span class="toc-text">6.4 启动 op-proposer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E9%AA%8C%E8%AF%81%E9%83%A8%E7%BD%B2"><span class="toc-text">七、验证部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E6%A3%80%E6%9F%A5-L2-%E9%93%BE%E7%8A%B6%E6%80%81"><span class="toc-text">7.1 检查 L2 链状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E8%BF%9E%E6%8E%A5%E9%92%B1%E5%8C%85%E5%88%B0-Layer2"><span class="toc-text">7.2 连接钱包到 Layer2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%B0%86-SepoliaETH-%E5%8F%91%E9%80%81%E5%88%B0-Bridge-%E5%90%88%E7%BA%A6"><span class="toc-text">7.3 将 SepoliaETH 发送到 Bridge 合约</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%9F%BA%E6%9C%AC%E8%BD%AC%E8%B4%A6-CLI-%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B"><span class="toc-text">八、基本转账 CLI 操作实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BB%8E-L1-%E7%9A%84-Admin-%E6%A1%A5%E6%8E%A5%E5%88%B0-L2-%E7%9A%84-admin"><span class="toc-text">8.1 从 L1 的 Admin 桥接到 L2 的 admin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E4%BB%8E-L1-%E7%9A%84-Admin-%E6%A1%A5%E6%8E%A5%E5%88%B0-L2-%E7%9A%84-Batcher"><span class="toc-text">8.2 从 L1 的 Admin 桥接到 L2 的 Batcher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-L2-%E8%BD%AC%E8%B4%A6"><span class="toc-text">8.3 L2 转账</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Layer2%20%E2%80%94%E2%80%94%20OP%20Stack%20%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F15%2Fop-stack-deployment-part1%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
