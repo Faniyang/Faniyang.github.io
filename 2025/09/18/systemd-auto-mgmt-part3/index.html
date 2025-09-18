@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Layer2 —— Systemd 自动化管理 OP Stack 组件 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Layer2 —— Systemd 自动化管理 OP Stack 组件</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Layer2/" title="Layer2">
+                    #Layer2
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Systemd/" title="Systemd">
+                    #Systemd
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>在部署和运行 Optimism 的过程中，手动启动各个组件既繁琐又容易出错。本文将详细介绍如何使用 systemd 服务来自动化管理 OP Stack 的各个核心组件，包括 op-geth、op-node、op-batcher 和 op-proposer。</p>
+<p>⚠️<strong>本文中的路径 <code>/home/eth/optimism/</code> 仅作示例，使用前请根据自己的部署目录修改</strong></p>
+<h2 id="一、Why-Systemd？"><a href="#一、Why-Systemd？" class="headerlink" title="一、Why Systemd？"></a>一、Why Systemd？</h2><p>Systemd 是现代 Linux 发行版的标准初始化系统和服务管理器，它提供了以下优势：</p>
+<ul>
+<li><strong>自动重启</strong>：当服务异常退出时自动重启</li>
+<li><strong>依赖管理</strong>：确保服务按正确顺序启动</li>
+<li><strong>日志管理</strong>：集中管理服务日志</li>
+<li><strong>开机自启</strong>：系统重启后自动启动服务</li>
+</ul>
+<h2 id="二、启动脚本"><a href="#二、启动脚本" class="headerlink" title="二、启动脚本"></a>二、启动脚本</h2><h3 id="2-1-创建脚本目录"><a href="#2-1-创建脚本目录" class="headerlink" title="2.1 创建脚本目录"></a>2.1 创建脚本目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism/</span><br><span class="line"><span class="built_in">mkdir</span> -p scripts</span><br><span class="line"><span class="built_in">cd</span> scripts/</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-创建启动脚本"><a href="#2-2-创建启动脚本" class="headerlink" title="2.2 创建启动脚本"></a>2.2 创建启动脚本</h3><h4 id="OP-Geth-启动脚本"><a href="#OP-Geth-启动脚本" class="headerlink" title="OP-Geth 启动脚本"></a>OP-Geth 启动脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-geth_starter.sh &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">LOG_DIR=<span class="string">&quot;/home/eth/optimism/logs/op-geth&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$LOG_DIR</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting Geth node at <span class="subst">$(date)</span>&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /home/eth/optimism/op-geth</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /home/eth/optimism/.envrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> ./build/bin/geth \</span><br><span class="line">	--datadir ./datadir \</span><br><span class="line">	--http \</span><br><span class="line">    --http.corsdomain=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.addr=0.0.0.0 \</span><br><span class="line">    --http.api=web3,debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --ws \</span><br><span class="line">    --ws.addr=0.0.0.0 \</span><br><span class="line">    --ws.port=8546 \</span><br><span class="line">    --ws.origins=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --ws.api=debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --syncmode=full \</span><br><span class="line">    --gcmode=archive \</span><br><span class="line">    --nodiscover \</span><br><span class="line">    --maxpeers=0 \</span><br><span class="line">    --networkid=<span class="variable">$L2_CHAIN_ID</span> \</span><br><span class="line">    --authrpc.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --authrpc.addr=0.0.0.0 \</span><br><span class="line">    --authrpc.port=8551 \</span><br><span class="line">    --authrpc.jwtsecret=./jwt.txt \</span><br><span class="line">    --rollup.disabletxpoolgossip=<span class="literal">true</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Node-启动脚本"><a href="#OP-Node-启动脚本" class="headerlink" title="OP-Node 启动脚本"></a>OP-Node 启动脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-node_starter.sh &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">LOG_DIR=<span class="string">&quot;/home/eth/optimism/logs/op-node&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$LOG_DIR</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting OP-Node at <span class="subst">$(date)</span>&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /home/eth/optimism/op-node</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /home/eth/optimism/.envrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> ./bin/op-node \</span><br><span class="line">        --l2=http://localhost:8551 \</span><br><span class="line">        --l2.jwt-secret=./jwt.txt \</span><br><span class="line">        --sequencer.enabled \</span><br><span class="line">        --sequencer.l1-confs=5 \</span><br><span class="line">        --verifier.l1-confs=4 \</span><br><span class="line">        --rollup.config=../.deployer/rollup.json \</span><br><span class="line">        --rpc.addr=0.0.0.0 \</span><br><span class="line">        --rpc.port=9545 \</span><br><span class="line">        --p2p.disable \</span><br><span class="line">        --rpc.enable-admin \</span><br><span class="line">        --p2p.sequencer.key=<span class="variable">$GS_SEQUENCER_PRIVATE_KEY</span> \</span><br><span class="line">        --l1=<span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">        --l1.rpckind=<span class="variable">$L1_RPC_KIND</span> \</span><br><span class="line">        --l1.beacon=<span class="variable">$L1_BEACON_URL</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Batcher-启动脚本"><a href="#OP-Batcher-启动脚本" class="headerlink" title="OP-Batcher 启动脚本"></a>OP-Batcher 启动脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-batcher_starter.sh &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">LOG_DIR=<span class="string">&quot;/home/eth/optimism/logs/op-batcher&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$LOG_DIR</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting OP-Batcher at <span class="subst">$(date)</span>&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /home/eth/optimism/op-batcher</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /home/eth/optimism/.envrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> ./bin/op-batcher \</span><br><span class="line">        --l2-eth-rpc=http://localhost:8545 \</span><br><span class="line">        --rollup-rpc=http://localhost:9545 \</span><br><span class="line">        --poll-interval=1s \</span><br><span class="line">        --sub-safety-margin=6 \</span><br><span class="line">        --num-confirmations=1 \</span><br><span class="line">        --safe-abort-nonce-too-low-count=3 \</span><br><span class="line">        --resubmission-timeout=30s \</span><br><span class="line">        --rpc.addr=0.0.0.0 \</span><br><span class="line">        --rpc.port=8548 \</span><br><span class="line">        --rpc.enable-admin \</span><br><span class="line">        --max-channel-duration=25 \</span><br><span class="line">        --l1-eth-rpc=<span class="variable">$L1_RPC_URL</span> \</span><br><span class="line">        --private-key=<span class="variable">$GS_BATCHER_PRIVATE_KEY</span></span><br><span class="line">EOF</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Proposer-启动脚本"><a href="#OP-Proposer-启动脚本" class="headerlink" title="OP-Proposer 启动脚本"></a>OP-Proposer 启动脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-proposer_starter.sh &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">LOG_DIR=<span class="string">&quot;/home/eth/optimism/logs/op-proposer&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$LOG_DIR</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting OP-Proposer at <span class="subst">$(date)</span>&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /home/eth/optimism/op-proposer</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /home/eth/optimism/.envrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> ./bin/op-proposer \</span><br><span class="line">    --poll-interval=12s \</span><br><span class="line">    --rpc.port=8560 \</span><br><span class="line">    --rollup-rpc=http://localhost:9545 \</span><br><span class="line">    --private-key=<span class="variable">$GS_PROPOSER_PRIVATE_KEY</span> \</span><br><span class="line">    --l1-eth-rpc=<span class="variable">$L1_RPC_URL</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-设置脚本权限"><a href="#2-3-设置脚本权限" class="headerlink" title="2.3 设置脚本权限"></a>2.3 设置脚本权限</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x op-geth_starter.sh op-node_starter.sh op-batcher_starter.sh  op-proposer_starter.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-测试脚本"><a href="#2-4-测试脚本" class="headerlink" title="2.4 测试脚本"></a>2.4 测试脚本</h3><p>此时可以尝试启动一下脚本，检查脚本是否正常工作</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 L2 节点的 Geth</span></span><br><span class="line">./op-geth_starter.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 OP Node</span></span><br><span class="line">./op-node_starter.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 Batcher</span></span><br><span class="line">./op-batcher_starter.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 Proposer</span></span><br><span class="line">./op-proposer_starter.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、Systemd-服务文件"><a href="#三、Systemd-服务文件" class="headerlink" title="三、Systemd 服务文件"></a>三、Systemd 服务文件</h2><h3 id="3-1-创建服务文件目录"><a href="#3-1-创建服务文件目录" class="headerlink" title="3.1 创建服务文件目录"></a>3.1 创建服务文件目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/optimism/</span><br><span class="line"><span class="built_in">mkdir</span> -p service</span><br><span class="line"><span class="built_in">cd</span> service/</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-创建-Systemd-服务文件"><a href="#3-2-创建-Systemd-服务文件" class="headerlink" title="3.2 创建 Systemd 服务文件"></a>3.2 创建 Systemd 服务文件</h3><h4 id="OP-Geth-服务配置"><a href="#OP-Geth-服务配置" class="headerlink" title="OP-Geth 服务配置"></a>OP-Geth 服务配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-geth.service &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=OP-Geth Execution Client</span><br><span class="line">After=network-online.target</span><br><span class="line">Wants=network-online.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line"></span><br><span class="line">WorkingDirectory=/home/eth/optimism/scripts</span><br><span class="line">ExecStart=/home/eth/optimism/scripts/op-geth_starter.sh</span><br><span class="line"></span><br><span class="line">StandardOutput=append:/home/eth/optimism/logs/op-geth/geth.log</span><br><span class="line">StandardError=append:/home/eth/optimism/logs/op-geth/geth.log</span><br><span class="line"></span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Node-服务配置"><a href="#OP-Node-服务配置" class="headerlink" title="OP-Node 服务配置"></a>OP-Node 服务配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-node.service &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=OP-Node L2 Consensus Client</span><br><span class="line">After=network-online.target op-geth.service</span><br><span class="line">Wants=network-online.target</span><br><span class="line">Requires=op-geth.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line"></span><br><span class="line">WorkingDirectory=/home/eth/optimism/scripts</span><br><span class="line">ExecStart=/home/eth/optimism/scripts/op-node_starter.sh</span><br><span class="line"></span><br><span class="line">StandardOutput=append:/home/eth/optimism/logs/op-node/op-node.log</span><br><span class="line">StandardError=append:/home/eth/optimism/logs/op-node/op-node.log</span><br><span class="line"></span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Batcher-服务配置"><a href="#OP-Batcher-服务配置" class="headerlink" title="OP-Batcher 服务配置"></a>OP-Batcher 服务配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; ./op-batcher.service &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=OP-Batcher L2 Transaction Batcher</span><br><span class="line">After=network-online.target op-node.service</span><br><span class="line">Wants=network-online.target</span><br><span class="line">Requires=op-node.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line"></span><br><span class="line">WorkingDirectory=/home/eth/optimism/scripts</span><br><span class="line">ExecStart=/home/eth/optimism/scripts/op-batcher_starter.sh</span><br><span class="line"></span><br><span class="line">StandardOutput=append:/home/eth/optimism/logs/op-batcher/op-batcher.log</span><br><span class="line">StandardError=append:/home/eth/optimism/logs/op-batcher/op-batcher.log</span><br><span class="line"></span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="OP-Proposer-服务配置"><a href="#OP-Proposer-服务配置" class="headerlink" title="OP-Proposer 服务配置"></a>OP-Proposer 服务配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt; ./op-proposer.service &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=OP-Proposer L2 State Proposer</span><br><span class="line">After=network-online.target op-node.service</span><br><span class="line">Wants=network-online.target</span><br><span class="line">Requires=op-node.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line"></span><br><span class="line">WorkingDirectory=/home/eth/optimism/scripts</span><br><span class="line">ExecStart=/home/eth/optimism/scripts/op-proposer_starter.sh</span><br><span class="line"></span><br><span class="line">StandardOutput=append:/home/eth/optimism/logs/op-proposer/op-proposer.log</span><br><span class="line">StandardError=append:/home/eth/optimism/logs/op-proposer/op-proposer.log</span><br><span class="line"></span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<h4 id="服务依赖关系说明"><a href="#服务依赖关系说明" class="headerlink" title="服务依赖关系说明"></a>服务依赖关系说明</h4><p>服务启动的依赖顺序如下：</p>
+<ol>
+<li><strong>op-geth</strong>：基础执行客户端，必须首先启动</li>
+<li><strong>op-node</strong>：依赖 op-geth 提供的 Engine API</li>
+<li><strong>op-batcher</strong> 和 <strong>op-proposer</strong>：都依赖 op-node 提供的 Rollup RPC</li>
+</ol>
+<p>通过 <code>After</code> 和 <code>Requires</code> 指令，systemd 会自动处理这些依赖关系。</p>
+<h3 id="3-3-安装服务文件"><a href="#3-3-安装服务文件" class="headerlink" title="3.3 安装服务文件"></a>3.3 安装服务文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建符号链接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -sf /home/eth/optimism/service/*.service /etc/systemd/system/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载 systemd 配置</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查服务文件语法是否有误</span></span><br><span class="line"><span class="built_in">sudo</span> systemd-analyze verify /etc/systemd/system/<span class="variable">$&#123;service&#125;</span>.service</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用开机自启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> op-geth op-node op-batcher op-proposer</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、启动服务"><a href="#四、启动服务" class="headerlink" title="四、启动服务"></a>四、启动服务</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动所有服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl start op-geth op-node op-batcher op-proposer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查服务状态</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl status op-geth op-node op-batcher op-proposer</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动成功状态应如下图所示：</strong><br><img src="/images/2025/layer2status.png"></p>
+<p><strong>Hooray！Systemd 配置成功！</strong></p>
+<h2 id="五、常见故障排查"><a href="#五、常见故障排查" class="headerlink" title="五、常见故障排查"></a>五、常见故障排查</h2><p><strong>日志管理</strong></p>
+<blockquote>
+<ul>
+<li><p>OP-Geth: <code>/home/eth/optimism/logs/op-geth/geth.log</code></p>
+</li>
+<li><p>OP-Node: <code>/home/eth/optimism/logs/op-node/op-node.log</code></p>
+</li>
+<li><p>OP-Batcher: <code>/home/eth/optimism/logs/op-batcher/op-batcher.log</code></p>
+</li>
+<li><p>OP-Proposer: <code>/home/eth/optimism/logs/op-proposer/op-proposer.log</code></p>
+</li>
+</ul>
+</blockquote>
+<h3 id="5-1-code-exited-status-1-FAILURE"><a href="#5-1-code-exited-status-1-FAILURE" class="headerlink" title="5.1 code&#x3D;exited, status&#x3D;1&#x2F;FAILURE"></a>5.1 code&#x3D;exited, status&#x3D;1&#x2F;FAILURE</h3><p>进入的 logs 的路径通过命令 <code>tail -n 50 YOUR_LOG_NAME</code> 查看服务的最近日志，使用 systemd 执行脚本时不会自动加载环境变量，如果脚本中使用了环境变量但没有正确加载，就会导致找不到相关变量而报错。</p>
+<p><img src="/images/2025/addressnotfound.png"></p>
+<p><strong>解决方案</strong>：确保启动脚本中正确配置环境变量加载语句：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/optimism/.envrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-code-exited-status-209-STDOUT"><a href="#5-2-code-exited-status-209-STDOUT" class="headerlink" title="5.2 code&#x3D;exited, status&#x3D;209&#x2F;STDOUT"></a>5.2 code&#x3D;exited, status&#x3D;209&#x2F;STDOUT</h3><p>通过命令 <code>sudo journalctl -u YOUR_SERVICE_NAME -n 50 --no-pager</code>查看服务的最近日志。服务启动时会检查配置的路径是否可访问或存在，需要检查配置的路径是否存在以及是否具有访问权限。</p>
+<p><strong>排查步骤</strong>：</p>
+<ol>
+<li>检查 <code>WorkingDirectory</code> 路径是否存在</li>
+<li>检查 <code>ExecStart</code> 指向的脚本文件是否存在且有执行权限</li>
+<li>检查日志目录是否可写</li>
+</ol>
+<p><img src="/images/2025/209-stdout.png"></p>
+<h3 id="5-3-其他常用调试命令示例"><a href="#5-3-其他常用调试命令示例" class="headerlink" title="5.3 其他常用调试命令示例"></a>5.3 其他常用调试命令示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看服务实时日志</span></span><br><span class="line"><span class="built_in">sudo</span> journalctl -u op-geth -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看运行组件实时日志</span></span><br><span class="line"><span class="built_in">tail</span> -f op-geth</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart op-geth op-node op-batcher op-proposer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止服务</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl stop op-geth op-node op-batcher op-proposer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查所有服务状态</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl is-active op-geth op-node op-batcher op-proposer</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h2><p>通过使用 systemd 管理 OP Stack 组件，我们实现了：</p>
+<ul>
+<li><strong>自动化管理</strong>：服务自动启动、重启和监控</li>
+<li><strong>依赖管理</strong>：确保服务按正确顺序启动</li>
+<li><strong>日志集中管理</strong>：方便问题排查和监控</li>
+<li><strong>生产环境就绪</strong>：满足生产环境的稳定性要求</li>
+</ul>
+<p>这种配置方式特别适合生产环境部署，能够显著减少手动维护工作量，提高系统的可靠性和稳定性。当遇到问题时，通过查看具体的错误代码和日志，能够快速定位和解决问题。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/09/17/blockscout-deployment-part2/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Layer2/" title="Layer2">
+                        #Layer2
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Systemd/" title="Systemd">
+                        #Systemd
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Why-Systemd%EF%BC%9F"><span class="toc-text">一、Why Systemd？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">二、启动脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%88%9B%E5%BB%BA%E8%84%9A%E6%9C%AC%E7%9B%AE%E5%BD%95"><span class="toc-text">2.1 创建脚本目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%88%9B%E5%BB%BA%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">2.2 创建启动脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Geth-%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">OP-Geth 启动脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Node-%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">OP-Node 启动脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Batcher-%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">OP-Batcher 启动脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Proposer-%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">OP-Proposer 启动脚本</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E8%AE%BE%E7%BD%AE%E8%84%9A%E6%9C%AC%E6%9D%83%E9%99%90"><span class="toc-text">2.3 设置脚本权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E6%B5%8B%E8%AF%95%E8%84%9A%E6%9C%AC"><span class="toc-text">2.4 测试脚本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Systemd-%E6%9C%8D%E5%8A%A1%E6%96%87%E4%BB%B6"><span class="toc-text">三、Systemd 服务文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="toc-text">3.1 创建服务文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%9B%E5%BB%BA-Systemd-%E6%9C%8D%E5%8A%A1%E6%96%87%E4%BB%B6"><span class="toc-text">3.2 创建 Systemd 服务文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Geth-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">OP-Geth 服务配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Node-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">OP-Node 服务配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Batcher-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">OP-Batcher 服务配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OP-Proposer-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="toc-text">OP-Proposer 服务配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB%E8%AF%B4%E6%98%8E"><span class="toc-text">服务依赖关系说明</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%AE%89%E8%A3%85%E6%9C%8D%E5%8A%A1%E6%96%87%E4%BB%B6"><span class="toc-text">3.3 安装服务文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-text">四、启动服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B8%B8%E8%A7%81%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5"><span class="toc-text">五、常见故障排查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-code-exited-status-1-FAILURE"><span class="toc-text">5.1 code&#x3D;exited, status&#x3D;1&#x2F;FAILURE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-code-exited-status-209-STDOUT"><span class="toc-text">5.2 code&#x3D;exited, status&#x3D;209&#x2F;STDOUT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E8%B0%83%E8%AF%95%E5%91%BD%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="toc-text">5.3 其他常用调试命令示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-text">六、总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Layer2%20%E2%80%94%E2%80%94%20Systemd%20%E8%87%AA%E5%8A%A8%E5%8C%96%E7%AE%A1%E7%90%86%20OP%20Stack%20%E7%BB%84%E4%BB%B6 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F18%2Fsystemd-auto-mgmt-part3%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
