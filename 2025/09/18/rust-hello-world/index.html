@@ -13,7 +13,7 @@
   
   <title>
     
-      Tag 
+      Rust —— Hello, World! 
       
       
       |
@@ -143,21 +143,149 @@
 
 
 
-  <!-- 标签页 url形式：https://yoursite/tags/ -->
-  <div class="container tag-index">
-    <div>
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockscout/" rel="tag">Blockscout</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flow/" rel="tag">Flow</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Layer2/" rel="tag">Layer2</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OPStack/" rel="tag">OPStack</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rust/" rel="tag">Rust</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Systemd/" rel="tag">Systemd</a><span class="tag-list-count">1</span></li></ul>
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Rust —— Hello, World!</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Rust/" title="Rust">
+                    #Rust
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World!"></a>Hello World!</h2><p><strong>Rust</strong>是一门静态编译的语言，强调<strong>性能</strong>、<strong>类型安全</strong>、<strong>并发性</strong>。</p>
+<h2 id="1-安装-Rust"><a href="#1-安装-Rust" class="headerlink" title="1. 安装 Rust"></a>1. 安装 Rust</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Rust 安装</span></span><br><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载环境变量</span></span><br><span class="line">. <span class="string">&quot;<span class="variable">$HOME</span>/.cargo/env&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">rustc --version</span><br></pre></td></tr></table></figure>
+
+<p><strong>其他常用命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Rust 更新</span></span><br><span class="line">rustup update</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rust 卸载</span></span><br><span class="line">rustup self uninstall</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rust 离线文档</span></span><br><span class="line">rustup doc</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-VS-Code-插件拓展"><a href="#2-VS-Code-插件拓展" class="headerlink" title="2. VS Code 插件拓展"></a>2. VS Code 插件拓展</h2><ul>
+<li><strong>rust-analyzer</strong> —— 代码补全与分析</li>
+<li><strong>Dependi</strong> —— Cargo.toml 依赖管理助手</li>
+<li><strong>Even Better TOML</strong> —— TOML 高亮与校验</li>
+<li><strong>CodeLLDB</strong> —— Rust Debugger</li>
+</ul>
+<h2 id="3-Hello，World"><a href="#3-Hello，World" class="headerlink" title="3. Hello，World"></a>3. Hello，World</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建项目目录</span></span><br><span class="line"><span class="built_in">mkdir</span> hello_world</span><br><span class="line"><span class="built_in">cd</span> hello_world/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建 main.rs</span></span><br><span class="line"><span class="built_in">cat</span> &gt; ./main.rs &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">fn <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    println!(<span class="string">&quot;Hello, world!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line">rustc main.rs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">./main</span><br></pre></td></tr></table></figure>
+
+<p><strong>执行后 Hello, world! 字符串应打印到终端</strong><br><img src="/images/Rust/hello-world.png"></p>
+<h3 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h3><p>编译时报错 <code>linker &#39;cc&#39; not found</code>，说明系统缺少编译工具，安装即可：</p>
+<p><img src="/images/Rust/linker-cc-err.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新软件包索引</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装构建工具</span></span><br><span class="line"><span class="built_in">sudo</span> apt install build-essential -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Hello-Cargo"><a href="#4-Hello-Cargo" class="headerlink" title="4. Hello, Cargo"></a>4. Hello, Cargo</h2><p><strong>Cargo</strong> 是 Rust 的官方构建工具和包管理器，提供 <strong>项目管理、依赖管理、编译、测试</strong> 等功能。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化项目</span></span><br><span class="line">cargo new hello_cargo</span><br><span class="line"><span class="built_in">cd</span> hello_cargo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑 src/main.rs</span></span><br><span class="line"><span class="built_in">cat</span> &gt; ./src/main.rs &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">fn <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    println!(<span class="string">&quot;Hello, cargo!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建并运行（等价于 cargo build + 执行）</span></span><br><span class="line">cargo run</span><br></pre></td></tr></table></figure>
+
+<p><strong>其他常用命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Debug 构建</span></span><br><span class="line">cargo build</span><br><span class="line"></span><br><span class="line"><span class="comment"># Release 构建</span></span><br><span class="line">cargo build —release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Cargo 版本</span></span><br><span class="line">cargo --version</span><br></pre></td></tr></table></figure>
+
+<p><strong>Hooray! Rust 学习之旅，正式启程！！！</strong></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/09/18/systemd-auto-mgmt-part3/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Rust/" title="Rust">
+                        #Rust
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hello-World"><span class="toc-text">Hello World!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85-Rust"><span class="toc-text">1. 安装 Rust</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-VS-Code-%E6%8F%92%E4%BB%B6%E6%8B%93%E5%B1%95"><span class="toc-text">2. VS Code 插件拓展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Hello%EF%BC%8CWorld"><span class="toc-text">3. Hello，World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Troubleshooting"><span class="toc-text">Troubleshooting</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Hello-Cargo"><span class="toc-text">4. Hello, Cargo</span></a></li></ol>
+      
     </div>
   </div>
-  
 
   
+<script src="/js/catalog.js"></script>
 
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
   
 
-  
 
-  
+
+      </div>
+    
+  </div>
+
 
         
 <div class="footer">
@@ -429,7 +557,7 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + tags + '&url=' + https%3A%2F%2Ffaniyang.github.io%2Ftags%2Findex.html + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Rust%20%E2%80%94%E2%80%94%20Hello%2C%20World! + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F18%2Frust-hello-world%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         

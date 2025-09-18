@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-18T11:27:41.460Z</updated>
+  <updated>2025-09-18T15:45:59.871Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -17,18 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Rust —— Hello, World!</title>
+    <link href="https://faniyang.github.io/2025/09/18/rust-hello-world/"/>
+    <id>https://faniyang.github.io/2025/09/18/rust-hello-world/</id>
+    <published>2025-09-18T14:18:43.000Z</published>
+    <updated>2025-09-18T15:45:59.871Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Hello-World&quot;&gt;&lt;a href=&quot;#Hello-World&quot; class=&quot;headerlink&quot; title=&quot;Hello World!&quot;&gt;&lt;/a&gt;Hello</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Layer2 —— Systemd 自动化管理 OP Stack 组件</title>
     <link href="https://faniyang.github.io/2025/09/18/systemd-auto-mgmt-part3/"/>
     <id>https://faniyang.github.io/2025/09/18/systemd-auto-mgmt-part3/</id>
     <published>2025-09-18T10:50:17.000Z</published>
-    <updated>2025-09-18T11:27:41.460Z</updated>
+    <updated>2025-09-18T15:46:02.578Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;在部署和运行 Optimism 的过程中，手动启动各个组件既繁琐又容易出错。本文将详细介绍如何使用 systemd 服务来自动化管理 OP Stack 的各个核心组件，包括 op-geth、op-node、op-batcher 和</summary>
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;在部署和运行 Optimism 的过程中，手动启动各个组件既繁琐又容易出错。本文将详细介绍如何使用 systemd 服务来自动化管理 OP</summary>
         
       
     
@@ -46,14 +69,14 @@
     <link href="https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/"/>
     <id>https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/</id>
     <published>2025-09-16T16:23:18.000Z</published>
-    <updated>2025-09-18T03:48:14.038Z</updated>
+    <updated>2025-09-18T15:45:54.355Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;h2 id=&quot;一、系统环境准备&quot;&gt;&lt;a href=&quot;#一、系统环境准备&quot; class=&quot;headerlink&quot; title=&quot;一、系统环境准备&quot;&gt;&lt;/a&gt;一、系统环境准备&lt;/h2&gt;&lt;h3 id=&quot;1-1-安装软件依赖&quot;&gt;&lt;a href=&quot;#1-1-安装软件依赖&quot;</summary>
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;本指南详细介绍了如何为搭建的 Layer2 区块链网络部署 Blockscout 区块浏览器。Blockscout</summary>
         
       
     
@@ -71,14 +94,14 @@
     <link href="https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/"/>
     <id>https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/</id>
     <published>2025-09-15T09:54:48.000Z</published>
-    <updated>2025-09-16T16:28:43.854Z</updated>
+    <updated>2025-09-18T15:45:57.132Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;h2 id=&quot;一、准备系统环境&quot;&gt;&lt;a href=&quot;#一、准备系统环境&quot; class=&quot;headerlink&quot; title=&quot;一、准备系统环境&quot;&gt;&lt;/a&gt;一、准备系统环境&lt;/h2&gt;&lt;h3 id=&quot;1-1-安装-Ubuntu&quot;&gt;&lt;a href=&quot;#1-1-安装-Ubuntu&quot;</summary>
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;OP Stack 是 Optimism 开发的模块化区块链技术栈，允许开发者轻松创建自己的 Layer2 网络。本指南提供了在</summary>
         
       
     
