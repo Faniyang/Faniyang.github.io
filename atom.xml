@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-18T15:45:59.871Z</updated>
+  <updated>2025-09-19T10:00:07.651Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Layer2 —— Op Stack 组件日志管理</title>
+    <link href="https://faniyang.github.io/2025/09/19/log-mgmt-part4/"/>
+    <id>https://faniyang.github.io/2025/09/19/log-mgmt-part4/</id>
+    <published>2025-09-19T09:30:42.000Z</published>
+    <updated>2025-09-19T10:00:07.651Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;Layer 2 节点的各项组件（如</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
+    
+    <category term="Journald" scheme="https://faniyang.github.io/tags/Journald/"/>
+    
+    <category term="Logrotate" scheme="https://faniyang.github.io/tags/Logrotate/"/>
+    
+  </entry>
   
   <entry>
     <title>Rust —— Hello, World!</title>

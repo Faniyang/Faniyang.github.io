@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Layer2 —— Op Stack 组件日志管理 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Layer2 —— Op Stack 组件日志管理</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Layer2/" title="Layer2">
+                    #Layer2
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Journald/" title="Journald">
+                    #Journald
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Logrotate/" title="Logrotate">
+                    #Logrotate
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Layer 2 节点的各项组件（如 <code>op-geth</code>、<code>op-node</code>、<code>op-batcher</code>、<code>op-proposer</code>）在运行过程中会产生大量日志数据。如果缺乏有效的日志管理策略，这些日志文件会持续增长，最终可能导致：</p>
+<ul>
+<li><strong>磁盘空间耗尽</strong>：影响节点正常运行，甚至导致服务中断</li>
+<li><strong>查询效率低下</strong>：巨大的日志文件难以进行快速的问题定位和分析</li>
+<li><strong>系统性能下降</strong>：持续的写操作会增加磁盘 I&#x2F;O 压力</li>
+</ul>
+<p>因此，选择一套稳定、高效的日志管理方案至关重要。</p>
+<h2 id="一、传统-Logrotate-管理"><a href="#一、传统-Logrotate-管理" class="headerlink" title="一、传统 Logrotate 管理"></a>一、传统 Logrotate 管理</h2><h3 id="1-什么是-Logrotate？"><a href="#1-什么是-Logrotate？" class="headerlink" title="1. 什么是 Logrotate？"></a>1. 什么是 Logrotate？</h3><p><code>logrotate</code> 是 Linux 系统的经典日志管理工具，通过 cron 定时任务（通常每日执行）对日志文件进行轮转、压缩和清理，有效控制日志文件大小。</p>
+<h3 id="2-Postrotate-服务重启方案"><a href="#2-Postrotate-服务重启方案" class="headerlink" title="2. Postrotate 服务重启方案"></a>2. Postrotate 服务重启方案</h3><p>这种方案在日志轮转后重启相关服务，确保服务能够正确处理新的日志文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/logrotate.d/layer2-services</span></span><br><span class="line">/home/eth/optimism/logs/*/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    daily</span><br><span class="line">    rotate 30</span><br><span class="line">    compress</span><br><span class="line">    delaycompress</span><br><span class="line">    missingok</span><br><span class="line">    notifempty</span><br><span class="line">    create 644 root root</span><br><span class="line">    dateext</span><br><span class="line">    dateformat -%Y-%m-%d</span><br><span class="line">    postrotate</span><br><span class="line">        systemctl reload-or-restart op-geth op-node op-batcher op-proposer &gt;/dev/null 2&gt;&amp;1 || <span class="literal">true</span></span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>优缺点分析</strong><ul>
+<li><strong>优点</strong>：确保日志完整性，无数据丢失风险</li>
+<li><strong>缺点</strong>：服务重启会触发区块重扫，严重影响同步效率，并可能导致新区块生成时间滞后</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-copytruncate-复制并清空"><a href="#3-copytruncate-复制并清空" class="headerlink" title="3. copytruncate 复制并清空"></a>3. copytruncate 复制并清空</h3><p>此方案通过复制当前日志内容后清空原文件的方式，服务进程毫无感知，避免服务重启。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /etc/logrotate.d/layer2-services</span></span><br><span class="line">/home/eth/optimism/logs/*/*.<span class="built_in">log</span> &#123;</span><br><span class="line">    daily</span><br><span class="line">    rotate 30</span><br><span class="line">    compress</span><br><span class="line">    delaycompress</span><br><span class="line">    missingok</span><br><span class="line">    notifempty</span><br><span class="line">    dateext</span><br><span class="line">    dateformat -%Y-%m-%d</span><br><span class="line">    copytruncate</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>优缺点分析</strong><ul>
+<li><strong>优点</strong>：无需服务重启，保证连续性</li>
+<li><strong>缺点</strong>：在复制和截断操作的毫秒级窗口期内可能丢失少量日志，并且会产生额外的磁盘 I&#x2F;O 开销。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-测试与验证"><a href="#4-测试与验证" class="headerlink" title="4. 测试与验证"></a>4. 测试与验证</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 预览轮转效果（不实际执行）</span></span><br><span class="line"><span class="built_in">sudo</span> logrotate -d /etc/logrotate.d/layer2-services</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制执行一次轮转</span></span><br><span class="line"><span class="built_in">sudo</span> logrotate -f /etc/logrotate.d/layer2-services</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、现代化-Journald-管理"><a href="#二、现代化-Journald-管理" class="headerlink" title="二、现代化 Journald 管理"></a>二、现代化 Journald 管理</h2><h3 id="1-什么是-Journald"><a href="#1-什么是-Journald" class="headerlink" title="1. 什么是 Journald"></a>1. 什么是 Journald</h3><p><code>journald</code> 是 systemd 生态的原生日志管理服务，它将日志作为结构化的事件流处理，并由其自身负责存储、轮转和清理，可以避免服务中断和数据丢失。</p>
+<h3 id="2-迁移步骤"><a href="#2-迁移步骤" class="headerlink" title="2. 迁移步骤"></a>2. 迁移步骤</h3><h4 id="2-1-修改-Systemd-Service-文件"><a href="#2-1-修改-Systemd-Service-文件" class="headerlink" title="2.1 修改 Systemd Service 文件"></a>2.1 修改 Systemd Service 文件</h4><p>迁移的核心是移除强制将日志输出到文件的配置，让日志流回归 <code>systemd</code> 的默认通道——<code>journald</code>。</p>
+<p>以 <strong><code>op-geth.service</code></strong> 为例，需移除 <code>StandardOutput</code> 和 <code>StandardError</code>配置。</p>
+<ul>
+<li><strong>需移除的配置</strong>:</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StandardOutput=append:/home/eth/optimism/logs/op-geth/geth.log</span><br><span class="line">StandardError=append:/home/eth/optimism/logs/op-geth/geth.log</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>修改后的 <code>op-geth.service</code> 示例</strong>:</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=OP-Geth Execution Client</span><br><span class="line">After=network-online.target</span><br><span class="line">Wants=network-online.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line"></span><br><span class="line">WorkingDirectory=/home/eth/optimism/scripts</span><br><span class="line">ExecStart=/home/eth/optimism/scripts/op-geth_starter.sh</span><br><span class="line"></span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=10</span><br><span class="line">LimitNOFILE=65536</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-简化启动脚本"><a href="#2-2-简化启动脚本" class="headerlink" title="2.2 简化启动脚本"></a>2.2 简化启动脚本</h4><p>由于不再需要管理日志文件，可以移除相关的目录创建逻辑。</p>
+<ul>
+<li><strong>需移除的配置</strong>:</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LOG_DIR=<span class="string">&quot;/home/eth/optimism/logs/op-geth&quot;</span></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$LOG_DIR</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>修改后的 <code>op-geth_starter.sh</code> 示例:</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting Geth node at <span class="subst">$(date)</span>&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /home/eth/optimism/op-geth</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /home/eth/optimism/.envrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> ./build/bin/geth \</span><br><span class="line">	--datadir ./datadir \</span><br><span class="line">	--http \</span><br><span class="line">    --http.corsdomain=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --http.addr=0.0.0.0 \</span><br><span class="line">    --http.api=web3,debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --ws \</span><br><span class="line">    --ws.addr=0.0.0.0 \</span><br><span class="line">    --ws.port=8546 \</span><br><span class="line">    --ws.origins=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --ws.api=debug,eth,txpool,net,engine,miner \</span><br><span class="line">    --syncmode=full \</span><br><span class="line">    --gcmode=archive \</span><br><span class="line">    --nodiscover \</span><br><span class="line">    --maxpeers=0 \</span><br><span class="line">    --networkid=<span class="variable">$L2_CHAIN_ID</span> \</span><br><span class="line">    --authrpc.vhosts=<span class="string">&quot;*&quot;</span> \</span><br><span class="line">    --authrpc.addr=0.0.0.0 \</span><br><span class="line">    --authrpc.port=8551 \</span><br><span class="line">    --authrpc.jwtsecret=./jwt.txt \</span><br><span class="line">    --rollup.disabletxpoolgossip=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：同样的修改需要应用到 <code>op-node</code>、<code>op-batcher</code>、<code>op-proposer</code> 等所有相关服务的 <code>.service</code> 文件和启动脚本中。</p>
+<h4 id="2-3-清理旧配置并应用更改"><a href="#2-3-清理旧配置并应用更改" class="headerlink" title="2.3 清理旧配置并应用更改"></a>2.3 清理旧配置并应用更改</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除旧的 logrotate 配置</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> -f /etc/logrotate.d/layer2-services</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新加载 systemd 配置</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启服务以应用更改</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart op-geth op-node op-batcher op-proposer</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证服务状态</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl status op-geth op-node op-batcher op-proposer</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4-配置-Journald-存储限制"><a href="#2-4-配置-Journald-存储限制" class="headerlink" title="2.4 配置 Journald 存储限制"></a>2.4 配置 Journald 存储限制</h4><p>为防止日志无限增长，需要设置合理的存储上限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/systemd/journald.conf</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>[Journal]</code> 部分添加或修改：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Journal]</span></span><br><span class="line"><span class="attr">SystemMaxUse</span>=<span class="number">10</span>G</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>SystemMaxUse=10G</code></strong>: 设置 journald 可使用的最大磁盘空间为 10GB。可以根据服务器磁盘大小调整此值（如 <code>5G</code>, <code>20G</code>）。</li>
+</ul>
+<p>保存文件后，重启 <code>journald</code> 服务使配置生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart systemd-journald</span><br></pre></td></tr></table></figure>
+
+<p>配置生效后，当日志总量将要超过设置的阈值时，<code>journald</code> 就会自动、静默地删除最旧的日志文件，为新日志腾出空间，确保日志大小始终保持在限制范围内。</p>
+<p><strong>Hooray！Journald 配置成功！！！</strong></p>
+<h2 id="三、日志管理常用命令"><a href="#三、日志管理常用命令" class="headerlink" title="三、日志管理常用命令"></a>三、日志管理常用命令</h2><p><strong>提示</strong>：在终端直接查看时，可以去掉 <code>--no-pager</code> 参数，以使用 <code>less</code> 分页器方便地上下滚动和搜索。导出文件时则需要加上。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 op-geth 服务的实时日志</span></span><br><span class="line">journalctl -u op-geth.service -f</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实时查看 op-geth 和 op-node 两个服务的混合日志</span></span><br><span class="line">journalctl -u op-geth.service -u op-node.service -f</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 op-geth 过去两小时的日志</span></span><br><span class="line">journalctl -u op-geth.service --since <span class="string">&quot;2 hour ago&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 op-node 今天的所有日志</span></span><br><span class="line">journalctl -u op-node.service --since <span class="string">&quot;today&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看特定时间段的日志 (示例日期: 2025-09-19)</span></span><br><span class="line">journalctl -u op-geth.service --since <span class="string">&quot;2025-09-19 15:00:00&quot;</span> --<span class="keyword">until</span> <span class="string">&quot;2025-09-19 17:00:00&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 导出 op-geth 昨日的全部日志到根目录</span></span><br><span class="line">journalctl -u op-geth.service --since <span class="string">&quot;yesterday&quot;</span> --<span class="keyword">until</span> <span class="string">&quot;today&quot;</span> --no-pager &gt; ~/op-geth_yesterday.log</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前 journald 日志占用空间</span></span><br><span class="line">journalctl --disk-usage</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 journald 当前的磁盘限额配置</span></span><br><span class="line"><span class="built_in">cat</span> /etc/systemd/journald.conf | grep SystemMaxUse</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于 <code>Layer2</code> 节点这样需要高可用性和连续运行的关键服务，现代化的 <code>Journald</code> 管理方案显然更具优势，原因如下：</p>
+<ul>
+<li><strong>零服务中断</strong>：避免了 Logrotate 重启服务导致的区块重扫问题</li>
+<li><strong>原生集成</strong>：与 Systemd 生态深度整合，管理更加统一</li>
+<li><strong>结构化存储</strong>：支持更丰富的查询和过滤功能</li>
+<li><strong>简化运维</strong>：无需复杂的轮转脚本，配置简单维护方便</li>
+</ul>
+<p>良好的日志管理是保障节点稳定运行、快速排查问题的基石，选择合适的方案能让维护工作事半功倍。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/09/18/rust-hello-world/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Layer2/" title="Layer2">
+                        #Layer2
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Journald/" title="Journald">
+                        #Journald
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Logrotate/" title="Logrotate">
+                        #Logrotate
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BC%A0%E7%BB%9F-Logrotate-%E7%AE%A1%E7%90%86"><span class="toc-text">一、传统 Logrotate 管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-Logrotate%EF%BC%9F"><span class="toc-text">1. 什么是 Logrotate？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Postrotate-%E6%9C%8D%E5%8A%A1%E9%87%8D%E5%90%AF%E6%96%B9%E6%A1%88"><span class="toc-text">2. Postrotate 服务重启方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-copytruncate-%E5%A4%8D%E5%88%B6%E5%B9%B6%E6%B8%85%E7%A9%BA"><span class="toc-text">3. copytruncate 复制并清空</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B5%8B%E8%AF%95%E4%B8%8E%E9%AA%8C%E8%AF%81"><span class="toc-text">4. 测试与验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%8E%B0%E4%BB%A3%E5%8C%96-Journald-%E7%AE%A1%E7%90%86"><span class="toc-text">二、现代化 Journald 管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF-Journald"><span class="toc-text">1. 什么是 Journald</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%81%E7%A7%BB%E6%AD%A5%E9%AA%A4"><span class="toc-text">2. 迁移步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E4%BF%AE%E6%94%B9-Systemd-Service-%E6%96%87%E4%BB%B6"><span class="toc-text">2.1 修改 Systemd Service 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E7%AE%80%E5%8C%96%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-text">2.2 简化启动脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%B8%85%E7%90%86%E6%97%A7%E9%85%8D%E7%BD%AE%E5%B9%B6%E5%BA%94%E7%94%A8%E6%9B%B4%E6%94%B9"><span class="toc-text">2.3 清理旧配置并应用更改</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-%E9%85%8D%E7%BD%AE-Journald-%E5%AD%98%E5%82%A8%E9%99%90%E5%88%B6"><span class="toc-text">2.4 配置 Journald 存储限制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">三、日志管理常用命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Layer2%20%E2%80%94%E2%80%94%20Op%20Stack%20%E7%BB%84%E4%BB%B6%E6%97%A5%E5%BF%97%E7%AE%A1%E7%90%86 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F19%2Flog-mgmt-part4%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
