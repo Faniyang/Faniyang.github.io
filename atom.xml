@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-19T14:41:47.755Z</updated>
+  <updated>2025-09-20T15:29:41.541Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -17,18 +17,18 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Rust —— 变量和可变性</title>
-    <link href="https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/"/>
-    <id>https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/</id>
-    <published>2025-09-19T14:24:31.000Z</published>
-    <updated>2025-09-19T14:41:47.755Z</updated>
+    <title>Rust —— 数据类型和函数</title>
+    <link href="https://faniyang.github.io/2025/09/20/rust-datatype-and-functions/"/>
+    <id>https://faniyang.github.io/2025/09/20/rust-datatype-and-functions/</id>
+    <published>2025-09-20T14:39:25.000Z</published>
+    <updated>2025-09-20T15:29:41.541Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;h3 id=&quot;1-可变与不可变变量&quot;&gt;&lt;a href=&quot;#1-可变与不可变变量&quot; class=&quot;headerlink&quot; title=&quot;1. 可变与不可变变量&quot;&gt;&lt;/a&gt;1.</summary>
+    <summary type="html">&lt;h2 id=&quot;数据类型（Data-Type）&quot;&gt;&lt;a href=&quot;#数据类型（Data-Type）&quot; class=&quot;headerlink&quot; title=&quot;数据类型（Data Type）&quot;&gt;&lt;/a&gt;数据类型（Data Type）&lt;/h2&gt;&lt;p&gt;Rust</summary>
         
       
     
@@ -40,29 +40,25 @@
   </entry>
   
   <entry>
-    <title>Layer2 —— Op Stack 组件日志管理</title>
-    <link href="https://faniyang.github.io/2025/09/19/log-mgmt-part4/"/>
-    <id>https://faniyang.github.io/2025/09/19/log-mgmt-part4/</id>
-    <published>2025-09-19T09:30:42.000Z</published>
-    <updated>2025-09-19T10:00:07.651Z</updated>
+    <title>Rust —— 变量和可变性</title>
+    <link href="https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/"/>
+    <id>https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/</id>
+    <published>2025-09-19T14:24:31.000Z</published>
+    <updated>2025-09-20T14:42:08.150Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;Layer 2 节点的各项组件（如</summary>
+    <summary type="html">&lt;h2 id=&quot;1-可变与不可变变量&quot;&gt;&lt;a href=&quot;#1-可变与不可变变量&quot; class=&quot;headerlink&quot; title=&quot;1. 可变与不可变变量&quot;&gt;&lt;/a&gt;1.</summary>
         
       
     
     
     
     
-    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
-    
-    <category term="Journald" scheme="https://faniyang.github.io/tags/Journald/"/>
-    
-    <category term="Logrotate" scheme="https://faniyang.github.io/tags/Logrotate/"/>
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
     
   </entry>
   
@@ -90,11 +86,36 @@
   </entry>
   
   <entry>
+    <title>Layer2 —— Op Stack 组件日志管理</title>
+    <link href="https://faniyang.github.io/2025/09/18/log-mgmt-part4/"/>
+    <id>https://faniyang.github.io/2025/09/18/log-mgmt-part4/</id>
+    <published>2025-09-18T09:30:42.000Z</published>
+    <updated>2025-09-20T15:31:20.557Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;Layer 2 节点的各项组件（如</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
+    
+    <category term="Journald" scheme="https://faniyang.github.io/tags/Journald/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Layer2 —— Systemd 自动化管理 OP Stack 组件</title>
-    <link href="https://faniyang.github.io/2025/09/18/systemd-auto-mgmt-part3/"/>
-    <id>https://faniyang.github.io/2025/09/18/systemd-auto-mgmt-part3/</id>
-    <published>2025-09-18T10:50:17.000Z</published>
-    <updated>2025-09-18T15:46:02.578Z</updated>
+    <link href="https://faniyang.github.io/2025/09/17/systemd-auto-mgmt-part3/"/>
+    <id>https://faniyang.github.io/2025/09/17/systemd-auto-mgmt-part3/</id>
+    <published>2025-09-17T10:50:17.000Z</published>
+    <updated>2025-09-20T15:28:31.090Z</updated>
     
     
       
@@ -116,10 +137,10 @@
   
   <entry>
     <title>Layer2 —— Blockscout 部署指南</title>
-    <link href="https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/"/>
-    <id>https://faniyang.github.io/2025/09/17/blockscout-deployment-part2/</id>
-    <published>2025-09-16T16:23:18.000Z</published>
-    <updated>2025-09-18T15:45:54.355Z</updated>
+    <link href="https://faniyang.github.io/2025/09/16/blockscout-deployment-part2/"/>
+    <id>https://faniyang.github.io/2025/09/16/blockscout-deployment-part2/</id>
+    <published>2025-09-15T16:23:18.000Z</published>
+    <updated>2025-09-20T15:28:04.781Z</updated>
     
     
       

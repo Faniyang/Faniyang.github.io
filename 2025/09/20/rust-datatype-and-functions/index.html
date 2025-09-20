@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Rust —— 数据类型和函数 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Rust —— 数据类型和函数</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Rust/" title="Rust">
+                    #Rust
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h2 id="数据类型（Data-Type）"><a href="#数据类型（Data-Type）" class="headerlink" title="数据类型（Data Type）"></a>数据类型（Data Type）</h2><p>Rust 是一门静态编译语言，必须在编译时知道所有变量的类型，所以声明时需要标注数据类型。</p>
+<h3 id="1-标量类型（Scalar-Type）"><a href="#1-标量类型（Scalar-Type）" class="headerlink" title="1. 标量类型（Scalar Type）"></a>1. 标量类型（Scalar Type）</h3><p>Rust 有四种主要标量类型：整数、浮点数、布尔值和字符。</p>
+<h4 id="1-1-整数类型（Integer）"><a href="#1-1-整数类型（Integer）" class="headerlink" title="1.1 整数类型（Integer）"></a>1.1 整数类型（Integer）</h4><table>
+<thead>
+<tr>
+<th>Length</th>
+<th>Signed (有符号类型)</th>
+<th>Unsigned (无符号类型)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8-bit</td>
+<td>i8 (-128 to 127)</td>
+<td>u8 (0 to 255)</td>
+</tr>
+<tr>
+<td>16-bit</td>
+<td>i16 (-32,768 to 32,767)</td>
+<td>u16 (0 to 65,535)</td>
+</tr>
+<tr>
+<td>32-bit</td>
+<td>i32 (-2^31 to 2^31-1)</td>
+<td>u32 (0 to 2^32-1)</td>
+</tr>
+<tr>
+<td>64-bit</td>
+<td>i64 (-2^63 to 2^63-1)</td>
+<td>u64 (0 to 2^64-1)</td>
+</tr>
+<tr>
+<td>128-bit</td>
+<td>i128 (-2^127 to 2^127-1)</td>
+<td>u128 (0 to 2^128-1)</td>
+</tr>
+<tr>
+<td>arch（依架构而定）</td>
+<td>isize</td>
+<td>usize</td>
+</tr>
+</tbody></table>
+<ul>
+<li><code>isize</code> 和 <code>usize</code> 的大小取决于运行程序的计算机架构：<ul>
+<li>64 位系统 → 64 位</li>
+<li>32 位系统 → 32 位</li>
+</ul>
+</li>
+</ul>
+<p>⚠️ 注意：如果声明变量的值超过数据类型的范围会导致 <strong>整数溢出（Integer Overflow）</strong>。</p>
+<h4 id="1-2-浮点数类型（Floating-Point-Type）"><a href="#1-2-浮点数类型（Floating-Point-Type）" class="headerlink" title="1.2 浮点数类型（Floating-Point Type）"></a>1.2 浮点数类型（Floating-Point Type）</h4><p>Rust 中浮点数类型有两种：<code>f32</code> 和 <code>f64</code>。默认是 <code>f64</code>。</p>
+<p>在现代 CPU 上，<code>f64</code> 的速度和 <code>f32</code> 基本相同，但精度更高。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">2.0</span>;      <span class="comment">// f64</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span>: <span class="type">f32</span> = <span class="number">3.0</span>; <span class="comment">// f32</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-3-布尔类型（Boolean-Type）"><a href="#1-3-布尔类型（Boolean-Type）" class="headerlink" title="1.3 布尔类型（Boolean Type）"></a>1.3 布尔类型（Boolean Type）</h4><p>布尔值有两个可能的值：<code>true</code> 和 <code>false</code>，大小为 1 个字节。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t</span> = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">f</span>: <span class="type">bool</span> = <span class="literal">false</span>; <span class="comment">// 显式类型标注</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> f &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;就这样吧&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-4-字符类型（Char-Type）"><a href="#1-4-字符类型（Char-Type）" class="headerlink" title="1.4 字符类型（Char Type）"></a>1.4 字符类型（Char Type）</h4><ul>
+<li>Rust 中用 <code>&#39;&#39;</code> 来指定 <code>char</code> 类型的字符</li>
+<li>用 <code>&quot;&quot;</code> 来指定字符串 <code>string</code></li>
+<li><code>char</code> 占用 <strong>4 个字节</strong></li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">c</span> = <span class="string">&#x27;z&#x27;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">z</span>: <span class="type">char</span> = <span class="string">&#x27;ℤ&#x27;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">heart_eyed_cat</span> = <span class="string">&#x27;😻&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-复合类型（Compound-Type）"><a href="#2-复合类型（Compound-Type）" class="headerlink" title="2. 复合类型（Compound Type）"></a>2. 复合类型（Compound Type）</h3><p>Rust 有两种复合类型：<strong>元组（Tuple）</strong> 和 <strong>数组（Array）</strong>。</p>
+<h4 id="2-1-元组（Tuple-Type）"><a href="#2-1-元组（Tuple-Type）" class="headerlink" title="2.1 元组（Tuple Type）"></a>2.1 元组（Tuple Type）</h4><ul>
+<li>元组可以存放不同类型的值</li>
+<li>长度固定，声明后不可改变</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tup</span>: (<span class="type">i32</span>, <span class="type">f64</span>, <span class="type">u8</span>) = (<span class="number">500</span>, <span class="number">6.4</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取元组的值有两种方式：</p>
+<ul>
+<li><p><strong>解构（Destructuring）</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tup</span>: (<span class="type">i32</span>, <span class="type">f64</span>, <span class="type">u8</span>) = (<span class="number">500</span>, <span class="number">6.4</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">let</span> (x, y, z) = tup;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of x is: &#123;x&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>索引（Index）</strong></p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">tup</span>: (<span class="type">i32</span>, <span class="type">f64</span>, <span class="type">u8</span>) = (<span class="number">500</span>, <span class="number">6.4</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = tup.<span class="number">0</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of x is: &#123;x&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>⚠️ 没有任何值的元组叫 <strong>unit 类型</strong>，写作 <code>()</code>。</p>
+<hr>
+<h4 id="2-2-数组（Array-Type）"><a href="#2-2-数组（Array-Type）" class="headerlink" title="2.2 数组（Array Type）"></a>2.2 数组（Array Type）</h4><ul>
+<li>所有元素必须是相同类型</li>
+<li>长度固定，存放在 <strong>栈</strong> 上</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Rust 中的数组具有固定长度，这点与其它语言不同，其它编程语言中数组是可变长度，与 Rust 中的 vector 类似。当你想将数据分配在栈上而不是堆或者你想确保始终有固定数量的元素时，数组非常有用，比如一年的月数是固定的。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">months</span> = [</span><br><span class="line">    <span class="string">&quot;January&quot;</span>, <span class="string">&quot;February&quot;</span>, <span class="string">&quot;March&quot;</span>, <span class="string">&quot;April&quot;</span>, <span class="string">&quot;May&quot;</span>, <span class="string">&quot;June&quot;</span>,</span><br><span class="line">    <span class="string">&quot;July&quot;</span>, <span class="string">&quot;August&quot;</span>, <span class="string">&quot;September&quot;</span>, <span class="string">&quot;October&quot;</span>, <span class="string">&quot;November&quot;</span>, <span class="string">&quot;December&quot;</span></span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+
+<p>指定数组类型与长度：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">a</span>: [<span class="type">i32</span>; <span class="number">5</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br></pre></td></tr></table></figure>
+
+<p>指定初始值和长度：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">3</span>; <span class="number">5</span>]; <span class="comment">// 等同于 [3, 3, 3, 3, 3]</span></span><br></pre></td></tr></table></figure>
+
+<p>数组是连续存放在栈上的有序结构，可以通过索引访问。Rust 的索引下标从 <strong>0</strong> 开始。</p>
+<ul>
+<li><p>访问数组元素</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first</span> = a[<span class="number">0</span>];  <span class="comment">// 访问数组中第一个元素</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">second</span> = a[<span class="number">1</span>]; <span class="comment">// 访问数组中第二个元素</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数组下标越界</p>
+<p>如果下标不在 <code>[0, Length-1]</code> 范围内：</p>
+<ul>
+<li>编译阶段：直接报 <strong>panic</strong> 警告</li>
+<li>运行阶段：无法提前知道输入，越界时会 <strong>立即终止程序</strong>，而不是访问无效内存</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Please enter an array index.&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">index</span> = <span class="type">String</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    io::<span class="title function_ invoke__">stdin</span>()</span><br><span class="line">        .<span class="title function_ invoke__">read_line</span>(&amp;<span class="keyword">mut</span> index)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Failed to read line&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">index</span>: <span class="type">usize</span> = index.<span class="title function_ invoke__">trim</span>().<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Index entered was not a number&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">element</span> = a[index];</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of the element at index &#123;index&#125; is: &#123;element&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>⚠️ Rust 的安全特性：<strong>遇到越界立刻退出</strong>，避免无效内存访问。</p>
+<hr>
+<h2 id="函数（Function）"><a href="#函数（Function）" class="headerlink" title="函数（Function）"></a>函数（Function）</h2><p>函数由以下部分构成：</p>
+<ul>
+<li><code>fn</code> 关键字</li>
+<li>函数名 <code>add</code></li>
+<li>参数 <code>x, y</code> 和参数类型 <code>i32</code></li>
+<li>函数体 <code>x + y</code></li>
+<li>返回值类型 <code>i32</code></li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="title function_ invoke__">add</span>(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of x is: &#123;x&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">add</span>(x: <span class="type">i32</span>, y: <span class="type">i32</span>) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    x + y</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="语句与表达式"><a href="#语句与表达式" class="headerlink" title="语句与表达式"></a>语句与表达式</h3><ul>
+<li><p><strong>语句（Statements）</strong>：执行操作，但不返回值</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// ❌ 错误写法</span></span><br><span class="line">    <span class="comment">// 因为 let y = 6 是语句，没有返回值</span></span><br><span class="line">    <span class="comment">// 这是 Rust 的一个特性，如果是 C 或 Ruby，赋值操作会返回被赋的值 6</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = (<span class="keyword">let</span> <span class="variable">y</span> = <span class="number">6</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>表达式（Expression）</strong>：计算并返回值</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">3</span>;</span><br><span class="line">        x + <span class="number">1</span>   <span class="comment">// 没有分号，表示表达式</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of y is: &#123;y&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/09/19/rust-variables-and-mutability/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Rust/" title="Rust">
+                        #Rust
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%EF%BC%88Data-Type%EF%BC%89"><span class="toc-text">数据类型（Data Type）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A0%87%E9%87%8F%E7%B1%BB%E5%9E%8B%EF%BC%88Scalar-Type%EF%BC%89"><span class="toc-text">1. 标量类型（Scalar Type）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E6%95%B4%E6%95%B0%E7%B1%BB%E5%9E%8B%EF%BC%88Integer%EF%BC%89"><span class="toc-text">1.1 整数类型（Integer）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E6%B5%AE%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8B%EF%BC%88Floating-Point-Type%EF%BC%89"><span class="toc-text">1.2 浮点数类型（Floating-Point Type）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B%EF%BC%88Boolean-Type%EF%BC%89"><span class="toc-text">1.3 布尔类型（Boolean Type）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-%E5%AD%97%E7%AC%A6%E7%B1%BB%E5%9E%8B%EF%BC%88Char-Type%EF%BC%89"><span class="toc-text">1.4 字符类型（Char Type）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%8D%E5%90%88%E7%B1%BB%E5%9E%8B%EF%BC%88Compound-Type%EF%BC%89"><span class="toc-text">2. 复合类型（Compound Type）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E5%85%83%E7%BB%84%EF%BC%88Tuple-Type%EF%BC%89"><span class="toc-text">2.1 元组（Tuple Type）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E6%95%B0%E7%BB%84%EF%BC%88Array-Type%EF%BC%89"><span class="toc-text">2.2 数组（Array Type）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%EF%BC%88Function%EF%BC%89"><span class="toc-text">函数（Function）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E4%B8%8E%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">语句与表达式</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Rust%20%E2%80%94%E2%80%94%20%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%87%BD%E6%95%B0 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F20%2Frust-datatype-and-functions%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
