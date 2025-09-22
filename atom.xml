@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-20T15:29:41.541Z</updated>
+  <updated>2025-09-22T07:26:27.014Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -17,11 +17,55 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Solana —— 环境搭建与基础命令</title>
+    <link href="https://faniyang.github.io/2025/09/22/solana-install-and-cli/"/>
+    <id>https://faniyang.github.io/2025/09/22/solana-install-and-cli/</id>
+    <published>2025-09-22T07:17:14.000Z</published>
+    <updated>2025-09-22T07:26:27.014Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;1-环境安装&quot;&gt;&lt;a href=&quot;#1-环境安装&quot; class=&quot;headerlink&quot; title=&quot;1. 环境安装&quot;&gt;&lt;/a&gt;1. 环境安装&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 流程控制</title>
+    <link href="https://faniyang.github.io/2025/09/22/rust-control-flows/"/>
+    <id>https://faniyang.github.io/2025/09/22/rust-control-flows/</id>
+    <published>2025-09-22T05:14:07.000Z</published>
+    <updated>2025-09-22T05:14:51.897Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;1-条件分支&quot;&gt;&lt;a href=&quot;#1-条件分支&quot; class=&quot;headerlink&quot; title=&quot;1. 条件分支&quot;&gt;&lt;/a&gt;1. 条件分支&lt;/h2&gt;&lt;h3 id=&quot;if-表达式&quot;&gt;&lt;a href=&quot;#if-表达式&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>Rust —— 数据类型和函数</title>
-    <link href="https://faniyang.github.io/2025/09/20/rust-datatype-and-functions/"/>
-    <id>https://faniyang.github.io/2025/09/20/rust-datatype-and-functions/</id>
-    <published>2025-09-20T14:39:25.000Z</published>
-    <updated>2025-09-20T15:29:41.541Z</updated>
+    <link href="https://faniyang.github.io/2025/09/21/rust-datatype-and-functions/"/>
+    <id>https://faniyang.github.io/2025/09/21/rust-datatype-and-functions/</id>
+    <published>2025-09-21T14:39:25.000Z</published>
+    <updated>2025-09-22T00:03:13.546Z</updated>
     
     
       
@@ -41,10 +85,10 @@
   
   <entry>
     <title>Rust —— 变量和可变性</title>
-    <link href="https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/"/>
-    <id>https://faniyang.github.io/2025/09/19/rust-variables-and-mutability/</id>
-    <published>2025-09-19T14:24:31.000Z</published>
-    <updated>2025-09-20T14:42:08.150Z</updated>
+    <link href="https://faniyang.github.io/2025/09/20/rust-variables-and-mutability/"/>
+    <id>https://faniyang.github.io/2025/09/20/rust-variables-and-mutability/</id>
+    <published>2025-09-20T14:24:31.000Z</published>
+    <updated>2025-09-22T00:03:15.432Z</updated>
     
     
       
@@ -64,10 +108,10 @@
   
   <entry>
     <title>Rust —— Hello, World!</title>
-    <link href="https://faniyang.github.io/2025/09/18/rust-hello-world/"/>
-    <id>https://faniyang.github.io/2025/09/18/rust-hello-world/</id>
-    <published>2025-09-18T14:18:43.000Z</published>
-    <updated>2025-09-18T15:45:59.871Z</updated>
+    <link href="https://faniyang.github.io/2025/09/19/rust-hello-world/"/>
+    <id>https://faniyang.github.io/2025/09/19/rust-hello-world/</id>
+    <published>2025-09-19T14:18:43.000Z</published>
+    <updated>2025-09-22T00:02:58.652Z</updated>
     
     
       

@@ -13,7 +13,7 @@
   
   <title>
     
-      Rust —— 变量和可变性 
+      Rust —— Hello, World! 
       
       
       |
@@ -154,7 +154,7 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Rust —— 变量和可变性</div>
+      <div class="post-title">Rust —— Hello, World!</div>
       <div class="post-attach">
         
               <span class="post-tags">
@@ -170,45 +170,41 @@
           
       </div>
       <div class="markdown-body">
-        <h2 id="1-可变与不可变变量"><a href="#1-可变与不可变变量" class="headerlink" title="1. 可变与不可变变量"></a>1. 可变与不可变变量</h2><ul>
-<li><strong>不可变变量（Immutable）</strong>：Rust 中变量默认不可变，一旦绑定后值不能改变。</li>
-<li><strong>可变变量（Mutable）</strong>：使用 <code>mut</code> 关键字，可以让变量的值在绑定后发生改变。</li>
-</ul>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 可变变量</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line">x = <span class="number">6</span>; <span class="comment">// ✅ 可以修改</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不可变变量</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">y</span> = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// y = 11; // ❌ 错误：不可修改</span></span><br></pre></td></tr></table></figure>
+        <h2 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World!"></a>Hello World!</h2><p><strong>Rust</strong>是一门静态编译的语言，强调<strong>性能</strong>、<strong>类型安全</strong>、<strong>并发性</strong>。</p>
+<h2 id="1-安装-Rust"><a href="#1-安装-Rust" class="headerlink" title="1. 安装 Rust"></a>1. 安装 Rust</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Rust 安装</span></span><br><span class="line">curl --proto <span class="string">&#x27;=https&#x27;</span> --tlsv1.2 -sSf https://sh.rustup.rs | sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载环境变量</span></span><br><span class="line">. <span class="string">&quot;<span class="variable">$HOME</span>/.cargo/env&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证安装</span></span><br><span class="line">rustc --version</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-常量（Constants）"><a href="#2-常量（Constants）" class="headerlink" title="2. 常量（Constants）"></a>2. 常量（Constants）</h2><ul>
-<li>使用 <code>const</code> 关键字声明，始终不可变</li>
-<li>常量名全部大写，单词之间用下划线分隔</li>
-<li>常量必须在编译期已知，并且类型必须显式标注</li>
-<li>与变量不同，常量不能用 <code>mut</code> 声明</li>
-<li>常量可以在任意作用域定义，包括全局作用域</li>
-</ul>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常量定义</span></span><br><span class="line"><span class="keyword">const</span> THREE_HOURS_IN_SECONDS: <span class="type">u32</span> = <span class="number">60</span> * <span class="number">60</span> * <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>其他常用命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Rust 更新</span></span><br><span class="line">rustup update</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rust 卸载</span></span><br><span class="line">rustup self uninstall</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rust 离线文档</span></span><br><span class="line">rustup doc</span><br></pre></td></tr></table></figure>
 
-<h2 id="3-遮蔽（Shadowing）"><a href="#3-遮蔽（Shadowing）" class="headerlink" title="3. 遮蔽（Shadowing）"></a>3. 遮蔽（Shadowing）</h2><p>使用 <code>let</code> 重复声明同名变量时，新变量会 <strong>遮蔽</strong> 旧变量。</p>
-<ul>
-<li><strong>在同一作用域内</strong>：旧绑定被完全隐藏，无法访问</li>
-<li><strong>跨作用域时</strong>：内层遮蔽外层，内层作用域结束后外层绑定重新可见</li>
+<h2 id="2-VS-Code-插件拓展"><a href="#2-VS-Code-插件拓展" class="headerlink" title="2. VS Code 插件拓展"></a>2. VS Code 插件拓展</h2><ul>
+<li><strong>rust-analyzer</strong> —— 代码补全与分析</li>
+<li><strong>Dependi</strong> —— Cargo.toml 依赖管理助手</li>
+<li><strong>Even Better TOML</strong> —— TOML 高亮与校验</li>
+<li><strong>CodeLLDB</strong> —— Rust Debugger</li>
 </ul>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = x + <span class="number">1</span>;  <span class="comment">// 新的 x 遮蔽旧的 x=5</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">x</span> = x * <span class="number">2</span>;  <span class="comment">// 仅在当前作用域生效，不会遮蔽前面的x = x + 1</span></span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;The value of x in the inner scope is: &#123;x&#125;&quot;</span>);	<span class="comment">// 输出 12</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;The value of x is: &#123;x&#125;&quot;</span>);	<span class="comment">// 输出 6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-Hello，World"><a href="#3-Hello，World" class="headerlink" title="3. Hello，World"></a>3. Hello，World</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建项目目录</span></span><br><span class="line"><span class="built_in">mkdir</span> hello_world</span><br><span class="line"><span class="built_in">cd</span> hello_world/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建 main.rs</span></span><br><span class="line"><span class="built_in">cat</span> &gt; ./main.rs &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">fn <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    println!(<span class="string">&quot;Hello, world!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>与 <code>mut</code> 的区别<ul>
-<li><strong><code>mut</code></strong>：修改同一个变量的值。</li>
-<li><strong>遮蔽</strong>：创建一个新的变量绑定，旧的绑定被隐藏，而且可以改变类型。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 mut：错误</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">spaces</span> = <span class="string">&quot;   &quot;</span>;</span><br><span class="line"><span class="comment">// spaces = spaces.len(); // ❌ 类型不匹配，&amp;str 不能赋值为 usize</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用遮蔽：正确</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">spaces</span> = <span class="string">&quot;   &quot;</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">spaces</span> = spaces.<span class="title function_ invoke__">len</span>(); <span class="comment">// ✅ 类型从 &amp;str → usize</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译</span></span><br><span class="line">rustc main.rs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">./main</span><br></pre></td></tr></table></figure>
 
-<p><strong>Hooray！变量和可变性小节完成！！！</strong></p>
+<p><strong>执行后 Hello, world! 字符串应打印到终端</strong><br><img src="/images/Rust/hello-world.png"></p>
+<h3 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h3><p>编译时报错 <code>linker &#39;cc&#39; not found</code>，说明系统缺少编译工具，安装即可：</p>
+<p><img src="/images/Rust/linker-cc-err.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 更新软件包索引</span></span><br><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装构建工具</span></span><br><span class="line"><span class="built_in">sudo</span> apt install build-essential -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Hello-Cargo"><a href="#4-Hello-Cargo" class="headerlink" title="4. Hello, Cargo"></a>4. Hello, Cargo</h2><p><strong>Cargo</strong> 是 Rust 的官方构建工具和包管理器，提供 <strong>项目管理、依赖管理、编译、测试</strong> 等功能。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化项目</span></span><br><span class="line">cargo new hello_cargo</span><br><span class="line"><span class="built_in">cd</span> hello_cargo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑 src/main.rs</span></span><br><span class="line"><span class="built_in">cat</span> &gt; ./src/main.rs &lt;&lt; <span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">fn <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    println!(<span class="string">&quot;Hello, cargo!&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建并运行（等价于 cargo build + 执行）</span></span><br><span class="line">cargo run</span><br></pre></td></tr></table></figure>
+
+<p><strong>其他常用命令</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Debug 构建</span></span><br><span class="line">cargo build</span><br><span class="line"></span><br><span class="line"><span class="comment"># Release 构建</span></span><br><span class="line">cargo build —release</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 Cargo 版本</span></span><br><span class="line">cargo --version</span><br></pre></td></tr></table></figure>
+
+<p><strong>Hooray! Rust 学习之旅，正式启程！！！</strong></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2025/09/18/rust-hello-world/" target="_self">
+              <a href="/2025/09/18/log-mgmt-part4/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -230,7 +226,7 @@
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2025/09/20/rust-datatype-and-functions/" target="_self">
+              <a href="/2025/09/20/rust-variables-and-mutability/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -247,7 +243,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8F%AF%E5%8F%98%E4%B8%8E%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%98%E9%87%8F"><span class="toc-text">1. 可变与不可变变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B8%B8%E9%87%8F%EF%BC%88Constants%EF%BC%89"><span class="toc-text">2. 常量（Constants）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%81%AE%E8%94%BD%EF%BC%88Shadowing%EF%BC%89"><span class="toc-text">3. 遮蔽（Shadowing）</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Hello-World"><span class="toc-text">Hello World!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85-Rust"><span class="toc-text">1. 安装 Rust</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-VS-Code-%E6%8F%92%E4%BB%B6%E6%8B%93%E5%B1%95"><span class="toc-text">2. VS Code 插件拓展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Hello%EF%BC%8CWorld"><span class="toc-text">3. Hello，World</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Troubleshooting"><span class="toc-text">Troubleshooting</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Hello-Cargo"><span class="toc-text">4. Hello, Cargo</span></a></li></ol>
       
     </div>
   </div>
@@ -566,7 +562,7 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Rust%20%E2%80%94%E2%80%94%20%E5%8F%98%E9%87%8F%E5%92%8C%E5%8F%AF%E5%8F%98%E6%80%A7 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F19%2Frust-variables-and-mutability%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Rust%20%E2%80%94%E2%80%94%20Hello%2C%20World! + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F09%2F19%2Frust-hello-world%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
