@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-23T05:50:16.204Z</updated>
+  <updated>2025-09-30T01:47:29.088Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -15,6 +15,113 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Solana —— 账户模型</title>
+    <link href="https://faniyang.github.io/2025/09/29/solana-account-model/"/>
+    <id>https://faniyang.github.io/2025/09/29/solana-account-model/</id>
+    <published>2025-09-29T03:18:39.000Z</published>
+    <updated>2025-09-30T01:47:29.088Z</updated>
+    
+    
+    
+    
+    
+    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solana —— 环境搭建与基础命令</title>
+    <link href="https://faniyang.github.io/2025/09/28/solana-install-and-cli/"/>
+    <id>https://faniyang.github.io/2025/09/28/solana-install-and-cli/</id>
+    <published>2025-09-28T07:17:14.000Z</published>
+    <updated>2025-09-30T01:47:37.431Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;1-环境安装&quot;&gt;&lt;a href=&quot;#1-环境安装&quot; class=&quot;headerlink&quot; title=&quot;1. 环境安装&quot;&gt;&lt;/a&gt;1. 环境安装&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 错误处理</title>
+    <link href="https://faniyang.github.io/2025/09/27/rust-error-handling/"/>
+    <id>https://faniyang.github.io/2025/09/27/rust-error-handling/</id>
+    <published>2025-09-27T03:12:04.000Z</published>
+    <updated>2025-09-30T01:47:05.799Z</updated>
+    
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 常见集合</title>
+    <link href="https://faniyang.github.io/2025/09/26/rust-common-collections/"/>
+    <id>https://faniyang.github.io/2025/09/26/rust-common-collections/</id>
+    <published>2025-09-26T03:11:49.000Z</published>
+    <updated>2025-09-30T03:05:06.762Z</updated>
+    
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 枚举和模式匹配</title>
+    <link href="https://faniyang.github.io/2025/09/25/rust-enums-and-pattern-matching/"/>
+    <id>https://faniyang.github.io/2025/09/25/rust-enums-and-pattern-matching/</id>
+    <published>2025-09-25T03:11:26.000Z</published>
+    <updated>2025-09-30T03:04:59.416Z</updated>
+    
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 结构体</title>
+    <link href="https://faniyang.github.io/2025/09/24/rust-structs/"/>
+    <id>https://faniyang.github.io/2025/09/24/rust-structs/</id>
+    <published>2025-09-24T02:19:13.000Z</published>
+    <updated>2025-09-30T01:46:22.692Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;结构体（Struct）和元组类似，都可以包含不同类型的数据。但与元组不同的是，结构体中的每个字段都有命名，因此更加清晰、灵活。我们不需要依赖数据的顺序来访问值，而是通过字段名来访问。&lt;/p&gt;
+&lt;h2 id=&quot;1-定义和实例化结构体&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
   
   <entry>
     <title>Rust —— 所有权</title>
@@ -37,29 +144,6 @@
     
     
     <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Solana —— 环境搭建与基础命令</title>
-    <link href="https://faniyang.github.io/2025/09/22/solana-install-and-cli/"/>
-    <id>https://faniyang.github.io/2025/09/22/solana-install-and-cli/</id>
-    <published>2025-09-22T07:17:14.000Z</published>
-    <updated>2025-09-22T07:26:27.014Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;1-环境安装&quot;&gt;&lt;a href=&quot;#1-环境安装&quot; class=&quot;headerlink&quot; title=&quot;1. 环境安装&quot;&gt;&lt;/a&gt;1. 环境安装&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
     
   </entry>
   
@@ -210,7 +294,7 @@
     <link href="https://faniyang.github.io/2025/09/16/blockscout-deployment-part2/"/>
     <id>https://faniyang.github.io/2025/09/16/blockscout-deployment-part2/</id>
     <published>2025-09-15T16:23:18.000Z</published>
-    <updated>2025-09-20T15:28:04.781Z</updated>
+    <updated>2025-09-28T01:09:27.486Z</updated>
     
     
       
@@ -369,31 +453,6 @@
 &lt;/div&gt;
 
 &lt;img</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Flow" scheme="https://faniyang.github.io/tags/Flow/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>于人来人往中，不惧离索</title>
-    <link href="https://faniyang.github.io/2022/12/31/2022/"/>
-    <id>https://faniyang.github.io/2022/12/31/2022/</id>
-    <published>2022-12-31T15:51:51.000Z</published>
-    <updated>2025-09-15T13:19:46.245Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;生命是一个淡淡的悲伤的过程，我们要不断地和过去告别，和很多事物告别&lt;/p&gt;
-&lt;p&gt;既然现实就是为了分别而相遇，那希望在今后的日子里，能够勇敢去爱，在所有的相遇中不断朝着＂最佳分别＂而努力，直到生命的最后一天&lt;/p&gt;
-&lt;p&gt;也希望未来的自己，内心能如水一般，变得更柔软、更包容</summary>
         
       
     
