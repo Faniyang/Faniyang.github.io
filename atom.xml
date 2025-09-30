@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-09-30T01:47:29.088Z</updated>
+  <updated>2025-09-30T05:34:48.192Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -17,40 +17,74 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Solana —— 账户模型</title>
-    <link href="https://faniyang.github.io/2025/09/29/solana-account-model/"/>
-    <id>https://faniyang.github.io/2025/09/29/solana-account-model/</id>
-    <published>2025-09-29T03:18:39.000Z</published>
-    <updated>2025-09-30T01:47:29.088Z</updated>
+    <title>Rust —— 生命周期</title>
+    <link href="https://faniyang.github.io/2025/09/30/rust-lifetimes/"/>
+    <id>https://faniyang.github.io/2025/09/30/rust-lifetimes/</id>
+    <published>2025-09-30T03:29:17.000Z</published>
+    <updated>2025-09-30T05:34:48.192Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;生命周期（Lifetime）是 Rust 中确保引用有效性的机制。每个引用都有生命周期，即引用保持有效的作用域。大多数情况下生命周期是隐式推断的，但在某些情况下需要显式标注。&lt;/p&gt;
+&lt;h2 id=&quot;1-生命周期的作用&quot;&gt;&lt;a href=&quot;#1-生命周期的作用&quot;</summary>
+        
+      
     
     
     
     
-    
-    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
     
   </entry>
   
   <entry>
-    <title>Solana —— 环境搭建与基础命令</title>
-    <link href="https://faniyang.github.io/2025/09/28/solana-install-and-cli/"/>
-    <id>https://faniyang.github.io/2025/09/28/solana-install-and-cli/</id>
-    <published>2025-09-28T07:17:14.000Z</published>
-    <updated>2025-09-30T01:47:37.431Z</updated>
+    <title>Rust —— 特征</title>
+    <link href="https://faniyang.github.io/2025/09/29/rust-traits/"/>
+    <id>https://faniyang.github.io/2025/09/29/rust-traits/</id>
+    <published>2025-09-29T03:28:55.000Z</published>
+    <updated>2025-09-30T05:34:55.352Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;h2 id=&quot;1-环境安装&quot;&gt;&lt;a href=&quot;#1-环境安装&quot; class=&quot;headerlink&quot; title=&quot;1. 环境安装&quot;&gt;&lt;/a&gt;1. 环境安装&lt;/h2&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td</summary>
+    <summary type="html">&lt;p&gt;Trait 定义了类型可以共享的行为。可以使用 trait 以抽象的方式定义共享行为，使用 trait 约束指定泛型类型必须具有特定行为。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt; Trait</summary>
         
       
     
     
     
     
-    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Rust —— 泛型</title>
+    <link href="https://faniyang.github.io/2025/09/28/rust-generic-types/"/>
+    <id>https://faniyang.github.io/2025/09/28/rust-generic-types/</id>
+    <published>2025-09-28T03:28:14.000Z</published>
+    <updated>2025-09-30T05:34:40.532Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;泛型允许我们用抽象的类型参数替代具体类型，从而编写可复用的代码。Rust 在编译时会进行&lt;strong&gt;单态化（Monomorphization）&lt;/strong&gt;，将泛型代码转换为具体类型的代码，因此使用泛型不会带来运行时性能损失。&lt;/p&gt;
+&lt;h2</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Rust" scheme="https://faniyang.github.io/tags/Rust/"/>
     
   </entry>
   
@@ -59,8 +93,16 @@
     <link href="https://faniyang.github.io/2025/09/27/rust-error-handling/"/>
     <id>https://faniyang.github.io/2025/09/27/rust-error-handling/</id>
     <published>2025-09-27T03:12:04.000Z</published>
-    <updated>2025-09-30T01:47:05.799Z</updated>
+    <updated>2025-09-30T05:34:13.500Z</updated>
     
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Rust 将错误分为两大类：&lt;strong&gt;可恢复错误&lt;/strong&gt;和&lt;strong&gt;不可恢复错误&lt;/strong&gt;。可恢复错误用 &lt;code&gt;Result&amp;lt;T, E&amp;gt;&lt;/code&gt; 处理，不可恢复错误用 &lt;code&gt;panic!&lt;/code&gt;</summary>
+        
+      
     
     
     
@@ -74,8 +116,16 @@
     <link href="https://faniyang.github.io/2025/09/26/rust-common-collections/"/>
     <id>https://faniyang.github.io/2025/09/26/rust-common-collections/</id>
     <published>2025-09-26T03:11:49.000Z</published>
-    <updated>2025-09-30T03:05:06.762Z</updated>
+    <updated>2025-09-30T05:33:57.767Z</updated>
     
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Rust</summary>
+        
+      
     
     
     
@@ -89,8 +139,17 @@
     <link href="https://faniyang.github.io/2025/09/25/rust-enums-and-pattern-matching/"/>
     <id>https://faniyang.github.io/2025/09/25/rust-enums-and-pattern-matching/</id>
     <published>2025-09-25T03:11:26.000Z</published>
-    <updated>2025-09-30T03:04:59.416Z</updated>
+    <updated>2025-09-30T05:33:35.865Z</updated>
     
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;枚举（Enum）允许我们通过列举所有可能的变体来定义一个类型。与结构体类似，枚举也可以包含数据和方法，但更适合表示”多选一”的情况。&lt;/p&gt;
+&lt;h2 id=&quot;1-定义和使用枚举&quot;&gt;&lt;a href=&quot;#1-定义和使用枚举&quot; class=&quot;headerlink&quot;</summary>
+        
+      
     
     
     
@@ -104,7 +163,7 @@
     <link href="https://faniyang.github.io/2025/09/24/rust-structs/"/>
     <id>https://faniyang.github.io/2025/09/24/rust-structs/</id>
     <published>2025-09-24T02:19:13.000Z</published>
-    <updated>2025-09-30T01:46:22.692Z</updated>
+    <updated>2025-09-30T03:11:36.420Z</updated>
     
     
       
@@ -128,7 +187,7 @@
     <link href="https://faniyang.github.io/2025/09/23/rust-ownership/"/>
     <id>https://faniyang.github.io/2025/09/23/rust-ownership/</id>
     <published>2025-09-23T05:24:21.000Z</published>
-    <updated>2025-09-23T05:50:16.204Z</updated>
+    <updated>2025-09-30T03:12:11.100Z</updated>
     
     
       
@@ -425,34 +484,6 @@
     <summary type="html">&lt;div align=&quot;center&quot;&gt;
 
 &lt;p&gt;&lt;strong&gt;2023 年的每一个月、每一周都有一点点不一样&lt;/strong&gt;&lt;br&gt;某一天，我做了一个小小的改变，从那之后，&lt;strong&gt;每一天&lt;/strong&gt;也随之焕然一新&lt;br&gt;因为在喜欢我的人里，多了一位很重要的人</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Flow" scheme="https://faniyang.github.io/tags/Flow/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Fortunate to Cross Paths</title>
-    <link href="https://faniyang.github.io/2023/12/17/fortunate_to_cross_paths/"/>
-    <id>https://faniyang.github.io/2023/12/17/fortunate_to_cross_paths/</id>
-    <published>2023-12-17T13:37:00.000Z</published>
-    <updated>2025-09-15T13:19:55.142Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;div align=&quot;center&quot;&gt;
-
-&lt;p&gt;原来每段相遇都有一份恩情&lt;br&gt;回望今年走过的路，徒过的步&lt;br&gt;不知不觉大家已经认识这么久了&lt;br&gt;感谢相遇，感谢一路同行 🔆&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;img</summary>
         
       
     
