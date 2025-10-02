@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Solana —— 账户模型与简单交互 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Solana —— 账户模型与简单交互</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Solana/" title="Solana">
+                    #Solana
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>在 Solana 中，所有数据都存储在称为”账户”（Accounts）的结构中。可以将 Solana 上的数据视为一个公共数据库，其中有一个名为”Accounts”的表，表中的每一条记录就是一个”账户”。</p>
+<h2 id="1-核心要点"><a href="#1-核心要点" class="headerlink" title="1. 核心要点"></a>1. 核心要点</h2><ul>
+<li><strong>存储容量</strong>：账户最多可以存储 10MiB 的数据，可以是可执行的程序代码或程序状态</li>
+<li><strong>租金押金</strong>：账户需要按比例缴纳租金押金（以 lamports 计，即 SOL 的最小单位），押金金额与存储的数据量成正比，<strong>关闭账户时可以完全收回</strong></li>
+<li><strong>所有权机制</strong>：每个账户都有一个程序所有者。只有拥有该账户的程序才能修改其数据或扣除其 lamport 余额，但任何人都可以增加余额</li>
+<li>特殊账户类型<ul>
+<li>Sysvar 账户：存储网络集群状态的特殊账户</li>
+<li>Program 账户：存储智能合约的可执行代码</li>
+<li>Data 账户：由程序创建用于存储和管理程序状态</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-账户结构"><a href="#2-账户结构" class="headerlink" title="2. 账户结构"></a>2. 账户结构</h2><h3 id="2-1-账户地址"><a href="#2-1-账户地址" class="headerlink" title="2.1 账户地址"></a>2.1 账户地址</h3><p>每个 Solana 账户都有一个唯一的 <strong>32 字节地址</strong>，通常显示为 base58 编码的字符串（例如：<code>14grJpemFaf88c8tiVb77W7TYg2W3ir6pfkKz3YjhhZ5</code>）。</p>
+<p>账户与其地址之间的关系类似于键值对，其中地址是用于定位账户链上数据的键。账户地址充当”Accounts”表中每个条目的”唯一标识符”。</p>
+<p><strong>地址生成方式：</strong></p>
+<ol>
+<li><strong>Ed25519 公钥地址</strong>（最常见）<ul>
+<li>大多数 Solana 账户使用 Ed25519 公钥作为其地址</li>
+</ul>
+</li>
+<li><strong>程序派生地址（PDA）</strong><ul>
+<li>可以从程序 ID 和可选输入（种子）确定性地派生的特殊地址</li>
+<li>PDA 是一种特殊的地址类型，不需要私钥就可以使用</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-2-账户类型定义"><a href="#2-2-账户类型定义" class="headerlink" title="2.2 账户类型定义"></a>2.2 账户类型定义</h3><p>所有 Solana 账户都具有相同的基础结构：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Account</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> lamports: <span class="type">u64</span>,			<span class="comment">// 账户中的 lamports 余额</span></span><br><span class="line">    <span class="keyword">pub</span> data: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;,			<span class="comment">// 账户中存储的数据</span></span><br><span class="line">    <span class="keyword">pub</span> owner: Pubkey,			<span class="comment">// 拥有此账户的程序。如果可执行，则为加载此账户的程序</span></span><br><span class="line">    <span class="keyword">pub</span> executable: <span class="type">bool</span>,		<span class="comment">// 此账户的数据是否包含已加载的程序（现在为只读）</span></span><br><span class="line">    <span class="keyword">pub</span> rent_epoch: Epoch,		<span class="comment">// 此账户下次需要支付租金的 epoch（已弃用）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-字段详解"><a href="#2-3-字段详解" class="headerlink" title="2.3 字段详解"></a>2.3 字段详解</h3><h4 id="Lamports-字段"><a href="#Lamports-字段" class="headerlink" title="Lamports 字段"></a>Lamports 字段</h4><p>账户的余额（以 lamports 为单位，<strong>1 SOL &#x3D; 10 亿 lamports</strong>）。</p>
+<p><strong>重要特性：</strong></p>
+<ul>
+<li>账户必须保持最低 lamport 余额，该余额与存储的数据量成正比（称为”租金”）</li>
+<li>关闭账户时可以完全收回存储在账户中的 lamport 余额</li>
+</ul>
+<h4 id="Data-字段"><a href="#Data-字段" class="headerlink" title="Data 字段"></a>Data 字段</h4><p>存储账户任意数据的字节数组，也称为”账户数据”。</p>
+<p><strong>不同账户类型的 data 内容：</strong></p>
+<ul>
+<li>对于程序账户：包含可执行程序代码本身或存储可执行代码的另一个账户的地址</li>
+<li>对于非可执行账户：通常存储要读取的状态数据</li>
+</ul>
+<p><strong>读取账户数据的步骤：</strong></p>
+<ol>
+<li>使用地址（公钥）获取账户</li>
+<li>将账户的 data 字段从原始字节反序列化为适当的数据结构（由拥有该账户的程序定义）</li>
+</ol>
+<h4 id="Owner-字段"><a href="#Owner-字段" class="headerlink" title="Owner 字段"></a>Owner 字段</h4><p>拥有此账户的程序 ID（公钥）。</p>
+<p><strong>所有权规则：</strong></p>
+<ul>
+<li>只有所有者程序才能更改账户的数据或扣除其 lamports 余额</li>
+<li>程序中定义的指令决定了账户的数据和 lamports 余额如何被更改</li>
+</ul>
+<h4 id="Executable-字段"><a href="#Executable-字段" class="headerlink" title="Executable 字段"></a>Executable 字段</h4><p>指示账户是否为可执行程序：</p>
+<ul>
+<li><code>true</code>：账户是可执行的 Solana 程序</li>
+<li><code>false</code>：账户是存储状态的数据账户</li>
+</ul>
+<p>对于可执行账户，<code>owner</code> 字段包含加载器程序的程序 ID。加载器程序是负责加载和管理可执行程序账户的内置程序。</p>
+<h4 id="Rent-Epoch-字段"><a href="#Rent-Epoch-字段" class="headerlink" title="Rent Epoch 字段"></a>Rent Epoch 字段</h4><p>**注意：**这是一个已弃用的遗留字段，不再使用。最初用于跟踪账户何时需要支付租金以维护其网络数据，此租金收取机制已被废弃。</p>
+<h2 id="3-租金机制"><a href="#3-租金机制" class="headerlink" title="3. 租金机制"></a>3. 租金机制</h2><p>要在链上存储数据，账户必须保持与存储数据量（字节）成正比的 lamport（SOL）余额。这个余额称为”租金”，但它更像是<strong>押金</strong>，因为关闭账户时可以收回全部金额。</p>
+<p><strong>注意：</strong> “租金”一词来自已弃用的机制，该机制会定期从低于租金阈值的账户中扣除 lamports。此机制已不再活跃。</p>
+<h2 id="4-程序所有权"><a href="#4-程序所有权" class="headerlink" title="4. 程序所有权"></a>4. 程序所有权</h2><p>在 Solana 上，”智能合约”被称为”程序”。程序所有权是 Solana 账户模型的关键部分。</p>
+<h3 id="4-1-所有者权限"><a href="#4-1-所有者权限" class="headerlink" title="4.1 所有者权限"></a>4.1 所有者权限</h3><p>只有所有者程序可以：</p>
+<ul>
+<li>更改账户的 <code>data</code> 字段</li>
+<li>从账户余额中扣除 lamports</li>
+</ul>
+<p>每个程序定义存储在账户 <code>data</code> 字段中的数据结构。程序的指令决定了如何更改这些数据和账户的 <code>lamports</code> 余额。</p>
+<h3 id="4-2-System-Program（系统程序）"><a href="#4-2-System-Program（系统程序）" class="headerlink" title="4.2 System Program（系统程序）"></a>4.2 System Program（系统程序）</h3><p>默认情况下，<strong>所有新账户都归 System Program 所有</strong>。</p>
+<p><strong>System Program 的关键功能：</strong></p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空间分配</td>
+<td>为新账户分配存储空间</td>
+</tr>
+<tr>
+<td>分配程序所有权</td>
+<td>将账户所有权转移给其他程序</td>
+</tr>
+<tr>
+<td>转账 SOL</td>
+<td>在账户之间转移 lamports</td>
+</tr>
+</tbody></table>
+<p><strong>System Account（系统账户）：</strong></p>
+<ul>
+<li>Solana 上的所有”钱包”账户都是由 System Program 拥有的”系统账户”</li>
+<li>这些账户中的 lamport 余额显示钱包拥有的 SOL 数量</li>
+<li><strong>只有系统账户可以支付交易费用</strong></li>
+<li>当首次向新地址发送 SOL 时，会在该地址自动创建一个由 System Program 拥有的账户</li>
+<li>新创建的系统账户的 owner 字段显示为 System Program 地址：<code>11111111111111111111111111111111</code></li>
+</ul>
+<h2 id="5-特殊账户类型"><a href="#5-特殊账户类型" class="headerlink" title="5. 特殊账户类型"></a>5. 特殊账户类型</h2><h3 id="5-1-Sysvar-Accounts（系统变量账户）"><a href="#5-1-Sysvar-Accounts（系统变量账户）" class="headerlink" title="5.1 Sysvar Accounts（系统变量账户）"></a>5.1 Sysvar Accounts（系统变量账户）</h3><p>Sysvar 账户是位于预定义地址的特殊账户，提供对集群状态数据的访问。这些账户会动态更新网络集群的相关数据。</p>
+<p>例如，可以通过 Sysvar Clock 账户获取当前的集群时间信息，这些账户的数据可以被获取并反序列化为相应的数据结构。</p>
+<h3 id="5-2-Program-Account（程序账户）"><a href="#5-2-Program-Account（程序账户）" class="headerlink" title="5.2 Program Account（程序账户）"></a>5.2 Program Account（程序账户）</h3><p>部署 Solana 程序会创建一个可执行的程序账户，用于存储程序的可执行代码。程序账户由加载器程序（Loader Program）拥有。</p>
+<p><strong>关键特点：</strong></p>
+<ul>
+<li>程序账户可以简单地视为程序本身</li>
+<li>调用程序的指令时，需要指定程序账户的地址（通常称为”Program ID”）</li>
+<li>程序账户的 <code>executable</code> 字段设置为 <code>true</code></li>
+</ul>
+<p><strong>程序部署方式：</strong></p>
+<ol>
+<li><strong>Loader-v3 之前的版本</strong>：<ul>
+<li>可执行代码直接存储在程序账户中</li>
+</ul>
+</li>
+<li><strong>Loader-v3</strong>（当前默认）：<ul>
+<li>可执行代码存储在单独的”程序数据账户”（Program Data Account）中</li>
+<li>程序账户只是指向该数据账户</li>
+<li>Solana CLI 默认使用最新的加载器版本</li>
+</ul>
+</li>
+</ol>
+<h3 id="5-3-Buffer-Account（缓冲区账户）"><a href="#5-3-Buffer-Account（缓冲区账户）" class="headerlink" title="5.3 Buffer Account（缓冲区账户）"></a>5.3 Buffer Account（缓冲区账户）</h3><p>Loader-v3 有一种特殊的账户类型，用于在部署或升级期间临时暂存程序的上传。在 Loader-v4 中，仍然有缓冲区，但它们只是普通的程序账户。</p>
+<h3 id="5-4-Program-Data-Account（程序数据账户）"><a href="#5-4-Program-Data-Account（程序数据账户）" class="headerlink" title="5.4 Program Data Account（程序数据账户）"></a>5.4 Program Data Account（程序数据账户）</h3><p>Loader-v3 工作方式与其他 BPF 加载器程序不同：</p>
+<ul>
+<li>程序账户只包含程序数据账户的地址</li>
+<li>程序数据账户存储实际的可执行代码</li>
+</ul>
+<p><strong>注意：</strong> 不要将程序数据账户与程序的数据账户（Data Account）混淆。</p>
+<h3 id="5-5-Data-Account（数据账户）"><a href="#5-5-Data-Account（数据账户）" class="headerlink" title="5.5 Data Account（数据账户）"></a>5.5 Data Account（数据账户）</h3><p>在 Solana 上，程序的可执行代码与程序的状态存储在<strong>不同的账户</strong>中。这类似于操作系统通常为程序及其数据使用单独文件的方式。</p>
+<p>为了维护状态，程序定义指令来创建它们拥有的独立账户。每个账户都有自己唯一的地址，可以存储程序定义的任意数据。</p>
+<p><strong>重要提示：</strong> 只有 System Program 可以创建新账户。System Program 创建账户后，可以将新账户的所有权分配给另一个程序。</p>
+<p><strong>创建数据账户的两步过程：</strong></p>
+<ol>
+<li><strong>调用 System Program</strong>：创建账户，然后将所有权转移给自定义程序</li>
+<li><strong>调用自定义程序</strong>：初始化账户数据（按程序指令定义）</li>
+</ol>
+<p><strong>示例：创建 Token Mint 账户</strong></p>
+<ul>
+<li>首先调用 System Program 创建账户并分配空间</li>
+<li>然后调用 Token Program 初始化 mint 账户的数据</li>
+<li>需要计算租金豁免所需的最低余额</li>
+<li>完成后账户由 Token Program 拥有并存储 mint 的相关数据</li>
+</ul>
+<h2 id="6-账户交互实战"><a href="#6-账户交互实战" class="headerlink" title="6. 账户交互实战"></a>6. 账户交互实战</h2><h3 id="6-1-环境准备"><a href="#6-1-环境准备" class="headerlink" title="6.1 环境准备"></a>6.1 环境准备</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动本地验证器</span></span><br><span class="line">solana-test-validator</span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到本地网络</span></span><br><span class="line">solana config <span class="built_in">set</span> -ul</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建本地钱包账户</span></span><br><span class="line">solana-keygen new --outfile ~/.config/solana/wallet1.json</span><br><span class="line">solana-keygen new --outfile ~/.config/solana/wallet2.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置默认钱包</span></span><br><span class="line">solana config <span class="built_in">set</span> --keypair ~/.config/solana/wallet1.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 请求空投</span></span><br><span class="line">solana airdrop 10</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-项目设置"><a href="#6-2-项目设置" class="headerlink" title="6.2 项目设置"></a>6.2 项目设置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建新项目</span></span><br><span class="line">cargo new account-interaction</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加依赖库</span></span><br><span class="line">cargo add solana_client</span><br><span class="line">cargo add solana_sdk</span><br><span class="line">cargo add solana_program</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-请求空投与查询余额"><a href="#6-3-请求空投与查询余额" class="headerlink" title="6.3 请求空投与查询余额"></a>6.3 请求空投与查询余额</h3><p>通过这个示例，你可以学习如何：</p>
+<ul>
+<li>连接到 Solana 网络</li>
+<li>请求空投到指定账户</li>
+<li>查询账户余额</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> solana_client::rpc_client::RpcClient;</span><br><span class="line"><span class="keyword">use</span> solana_sdk::pubkey::Pubkey;</span><br><span class="line"><span class="keyword">use</span> std::<span class="type">str</span>::FromStr;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Wallet1: 8BG3BQmLhCsayYUGinVyUMzfni7CM1WiVApqZmGaJbjW</span></span><br><span class="line"><span class="comment">// Wallet2: 65bUqQKj4Axew8Z7KpXGodFowdXbWBE4ne8ocUZMoKmz</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 创建 Solana 客户端连接</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rpc_url</span> = <span class="string">&quot;http://127.0.0.1:8899&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">client</span> = RpcClient::<span class="title function_ invoke__">new</span>(rpc_url);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 账户公钥</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">account_pubkey</span> = Pubkey::<span class="title function_ invoke__">from_str</span>(<span class="string">&quot;8BG3BQmLhCsayYUGinVyUMzfni7CM1WiVApqZmGaJbjW&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Invalid public key&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1 SOL = 10 亿 lamports</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">amount</span> = <span class="number">1_000_000_000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 请求空投</span></span><br><span class="line">    <span class="keyword">match</span> client.<span class="title function_ invoke__">request_airdrop</span>(&amp;account_pubkey, amount) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(signature) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;空投成功! 签名: &#123;&#125;&quot;</span>, signature),</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(err) =&gt; <span class="built_in">eprintln!</span>(<span class="string">&quot;空投失败: &#123;&#125;&quot;</span>, err),</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询账户余额</span></span><br><span class="line">    <span class="keyword">match</span> client.<span class="title function_ invoke__">get_balance</span>(&amp;account_pubkey) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(balance) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;账户余额: &#123;&#125; lamports&quot;</span>, balance);</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;账户余额: &#123;&#125; SOL&quot;</span>, balance <span class="keyword">as</span> <span class="type">f64</span> / <span class="number">1_000_000_000.0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(err) =&gt; <span class="built_in">eprintln!</span>(<span class="string">&quot;获取余额失败: &#123;&#125;&quot;</span>, err),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-转账交易"><a href="#6-4-转账交易" class="headerlink" title="6.4 转账交易"></a>6.4 转账交易</h3><p>这个示例演示了 Solana 账户之间的转账流程：</p>
+<ul>
+<li>加载发送方密钥对</li>
+<li>创建转账指令</li>
+<li>构建、签名并发送交易</li>
+</ul>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> solana_client::rpc_client::RpcClient;</span><br><span class="line"><span class="keyword">use</span> solana_sdk::&#123;</span><br><span class="line">    pubkey::Pubkey,</span><br><span class="line">    signature::&#123;Signer, read_keypair_file&#125;,</span><br><span class="line">    system_instruction,</span><br><span class="line">    transaction::Transaction,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">use</span> std::<span class="type">str</span>::FromStr;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Wallet1: 8BG3BQmLhCsayYUGinVyUMzfni7CM1WiVApqZmGaJbjW</span></span><br><span class="line"><span class="comment">// Wallet2: 65bUqQKj4Axew8Z7KpXGodFowdXbWBE4ne8ocUZMoKmz</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 创建 Solana 客户端连接</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rpc_url</span> = <span class="string">&quot;http://127.0.0.1:8899&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">client</span> = RpcClient::<span class="title function_ invoke__">new</span>(rpc_url);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 加载发送方密钥对</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sender</span> =</span><br><span class="line">        <span class="title function_ invoke__">read_keypair_file</span>(<span class="string">&quot;/home/sol/.config/solana/wallet1.json&quot;</span>).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;无法读取密钥文件&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 接收方公钥</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">receiver_pubkey</span> = Pubkey::<span class="title function_ invoke__">from_str</span>(<span class="string">&quot;65bUqQKj4Axew8Z7KpXGodFowdXbWBE4ne8ocUZMoKmz&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Invalid public key&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 转账金额：1 SOL</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">amount</span> = <span class="number">1_000_000_000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建转账指令</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">transfer_instruction</span> =</span><br><span class="line">        system_instruction::<span class="title function_ invoke__">transfer</span>(&amp;sender.<span class="title function_ invoke__">pubkey</span>(), &amp;receiver_pubkey, amount);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取最新区块哈希</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">recent_blockhash</span> = client.<span class="title function_ invoke__">get_latest_blockhash</span>().<span class="title function_ invoke__">expect</span>(<span class="string">&quot;无法获取最新区块哈希&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建并签名交易</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">transaction</span> = Transaction::<span class="title function_ invoke__">new_signed_with_payer</span>(</span><br><span class="line">        &amp;[transfer_instruction],</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(&amp;sender.<span class="title function_ invoke__">pubkey</span>()),</span><br><span class="line">        &amp;[&amp;sender],</span><br><span class="line">        recent_blockhash,</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 发送并确认交易</span></span><br><span class="line">    <span class="keyword">match</span> client.<span class="title function_ invoke__">send_and_confirm_transaction</span>(&amp;transaction) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(signature) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;转账成功! 签名: &#123;&#125;&quot;</span>, signature),</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(err) =&gt; <span class="built_in">eprintln!</span>(<span class="string">&quot;转账失败: &#123;&#125;&quot;</span>, err),</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询接收方余额</span></span><br><span class="line">    <span class="keyword">match</span> client.<span class="title function_ invoke__">get_balance</span>(&amp;receiver_pubkey) &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(balance) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;接收方账户余额: &#123;&#125; lamports&quot;</span>, balance);</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;接收方账户余额: &#123;&#125; SOL&quot;</span>, balance <span class="keyword">as</span> <span class="type">f64</span> / <span class="number">1_000_000_000.0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(err) =&gt; <span class="built_in">eprintln!</span>(<span class="string">&quot;获取余额失败: &#123;&#125;&quot;</span>, err),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a>7. 总结</h2><ol>
+<li><strong>账户是 Solana 的基础存储单元</strong>：所有数据都存储在账户中</li>
+<li><strong>账户具有统一的结构</strong>：所有账户共享相同的基础字段</li>
+<li><strong>所有权是关键</strong>：只有所有者程序可以修改账户数据</li>
+<li><strong>租金是可恢复的押金</strong>：不是真正的费用，关闭账户时可以收回</li>
+<li><strong>程序和数据分离</strong>：可执行代码和状态数据存储在不同的账户中</li>
+<li><strong>System Program 是账户的创建者</strong>：所有新账户都由 System Program 创建</li>
+</ol>
+<p><strong>Hooray！Solana 账户模型小节完成！！！</strong></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/10/01/solana-install-and-cli/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Solana/" title="Solana">
+                        #Solana
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9"><span class="toc-text">1. 核心要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%B4%A6%E6%88%B7%E7%BB%93%E6%9E%84"><span class="toc-text">2. 账户结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%B4%A6%E6%88%B7%E5%9C%B0%E5%9D%80"><span class="toc-text">2.1 账户地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%B4%A6%E6%88%B7%E7%B1%BB%E5%9E%8B%E5%AE%9A%E4%B9%89"><span class="toc-text">2.2 账户类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%AD%97%E6%AE%B5%E8%AF%A6%E8%A7%A3"><span class="toc-text">2.3 字段详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lamports-%E5%AD%97%E6%AE%B5"><span class="toc-text">Lamports 字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Data-%E5%AD%97%E6%AE%B5"><span class="toc-text">Data 字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Owner-%E5%AD%97%E6%AE%B5"><span class="toc-text">Owner 字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Executable-%E5%AD%97%E6%AE%B5"><span class="toc-text">Executable 字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Rent-Epoch-%E5%AD%97%E6%AE%B5"><span class="toc-text">Rent Epoch 字段</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%A7%9F%E9%87%91%E6%9C%BA%E5%88%B6"><span class="toc-text">3. 租金机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%A8%8B%E5%BA%8F%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-text">4. 程序所有权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E6%89%80%E6%9C%89%E8%80%85%E6%9D%83%E9%99%90"><span class="toc-text">4.1 所有者权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-System-Program%EF%BC%88%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%EF%BC%89"><span class="toc-text">4.2 System Program（系统程序）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%89%B9%E6%AE%8A%E8%B4%A6%E6%88%B7%E7%B1%BB%E5%9E%8B"><span class="toc-text">5. 特殊账户类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-Sysvar-Accounts%EF%BC%88%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F%E8%B4%A6%E6%88%B7%EF%BC%89"><span class="toc-text">5.1 Sysvar Accounts（系统变量账户）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-Program-Account%EF%BC%88%E7%A8%8B%E5%BA%8F%E8%B4%A6%E6%88%B7%EF%BC%89"><span class="toc-text">5.2 Program Account（程序账户）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Buffer-Account%EF%BC%88%E7%BC%93%E5%86%B2%E5%8C%BA%E8%B4%A6%E6%88%B7%EF%BC%89"><span class="toc-text">5.3 Buffer Account（缓冲区账户）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-Program-Data-Account%EF%BC%88%E7%A8%8B%E5%BA%8F%E6%95%B0%E6%8D%AE%E8%B4%A6%E6%88%B7%EF%BC%89"><span class="toc-text">5.4 Program Data Account（程序数据账户）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-Data-Account%EF%BC%88%E6%95%B0%E6%8D%AE%E8%B4%A6%E6%88%B7%EF%BC%89"><span class="toc-text">5.5 Data Account（数据账户）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%B4%A6%E6%88%B7%E4%BA%A4%E4%BA%92%E5%AE%9E%E6%88%98"><span class="toc-text">6. 账户交互实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE"><span class="toc-text">6.2 项目设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E8%AF%B7%E6%B1%82%E7%A9%BA%E6%8A%95%E4%B8%8E%E6%9F%A5%E8%AF%A2%E4%BD%99%E9%A2%9D"><span class="toc-text">6.3 请求空投与查询余额</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-%E8%BD%AC%E8%B4%A6%E4%BA%A4%E6%98%93"><span class="toc-text">6.4 转账交易</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%80%BB%E7%BB%93"><span class="toc-text">7. 总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Solana%20%E2%80%94%E2%80%94%20%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%AE%80%E5%8D%95%E4%BA%A4%E4%BA%92 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F10%2F02%2Fsolana-account-model%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

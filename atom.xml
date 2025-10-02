@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-10-01T02:30:09.797Z</updated>
+  <updated>2025-10-02T05:08:25.528Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Solana —— 账户模型与简单交互</title>
+    <link href="https://faniyang.github.io/2025/10/02/solana-account-model/"/>
+    <id>https://faniyang.github.io/2025/10/02/solana-account-model/</id>
+    <published>2025-10-02T03:18:39.000Z</published>
+    <updated>2025-10-02T05:08:25.528Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;在 Solana 中，所有数据都存储在称为”账户”（Accounts）的结构中。可以将 Solana 上的数据视为一个公共数据库，其中有一个名为”Accounts”的表，表中的每一条记录就是一个”账户”。&lt;/p&gt;
+&lt;h2 id=&quot;1-核心要点&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    
+  </entry>
   
   <entry>
     <title>Solana —— 环境搭建与基础命令</title>
@@ -459,29 +483,6 @@
     <summary type="html">&lt;p&gt;在山上度过了十天禁言、与外界信息隔离的出家生活，从观呼吸开始以慈悲观结束。去之前从没想过内观禅修那么难，难在深入敏锐地专注，难在全然平等地接受。&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id=&quot;关于做&quot;&gt;&lt;a href=&quot;#关于做&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Flow" scheme="https://faniyang.github.io/tags/Flow/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>25 Today, Halfway to 50 🤭</title>
-    <link href="https://faniyang.github.io/2024/01/15/happy-birthday/"/>
-    <id>https://faniyang.github.io/2024/01/15/happy-birthday/</id>
-    <published>2024-01-15T13:33:30.000Z</published>
-    <updated>2025-09-15T13:20:08.948Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;&lt;img</summary>
         
       
     
