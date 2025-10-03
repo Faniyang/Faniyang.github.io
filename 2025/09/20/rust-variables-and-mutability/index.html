@@ -201,7 +201,7 @@
 </ul>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 mut：错误</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">spaces</span> = <span class="string">&quot;   &quot;</span>;</span><br><span class="line"><span class="comment">// spaces = spaces.len(); // ❌ 类型不匹配，&amp;str 不能赋值为 usize</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用遮蔽：正确</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">spaces</span> = <span class="string">&quot;   &quot;</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">spaces</span> = spaces.<span class="title function_ invoke__">len</span>(); <span class="comment">// ✅ 类型从 &amp;str → usize</span></span><br></pre></td></tr></table></figure>
 
-<p><strong>Hooray！变量和可变性小节完成！！！</strong></p>
+<p><strong>Hooray！变量和可变性学习完成！！！</strong></p>
 
       </div>
       
