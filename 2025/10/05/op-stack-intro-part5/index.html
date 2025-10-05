@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Layer2 —— OP Stack 介绍 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Layer2 —— OP Stack 介绍</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Layer2/" title="Layer2">
+                    #Layer2
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/OPStack/" title="OPStack">
+                    #OPStack
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>OP Stack 是由 Optimism 团队开发的模块化区块链技术栈，让开发者能够像”搭积木”一样构建自己的 Layer2 网络。可以将 OP Stack 想象成一个”区块链建设套件”，里面包含了构建高性能区块链所需的所有核心组件。</p>
+<h2 id="1-核心要点"><a href="#1-核心要点" class="headerlink" title="1. 核心要点"></a>1. 核心要点</h2><ul>
+<li><strong>Optimistic Rollup 技术</strong>：采用”乐观验证”机制——默认信任交易是正确的，只在出现争议时才进行验证</li>
+<li><strong>完全 EVM 兼容</strong>：现有的以太坊智能合约可以无需修改直接部署</li>
+<li><strong>安全性继承</strong>：通过将数据发布到以太坊主网，继承了以太坊 L1 的安全性</li>
+<li><strong>模块化设计</strong>：各个组件职责明确，可以独立升级和替换</li>
+<li><strong>六大核心组件</strong>：op-geth（执行引擎）、op-node（共识层）、op-batcher（批处理器）、op-proposer（状态提议器）、op-challenger（争议挑战器）和 L1 合约系统</li>
+</ul>
+<p><strong>性能提升对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>以太坊 L1</th>
+<th>OP Stack L2</th>
+<th>提升倍数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TPS</td>
+<td>15-30</td>
+<td>150-2000</td>
+<td>10-100x</td>
+</tr>
+<tr>
+<td>出块时间</td>
+<td>12 秒</td>
+<td>2 秒</td>
+<td>6x 加速</td>
+</tr>
+<tr>
+<td>交易费用</td>
+<td>5-50 USD</td>
+<td>0.01-0.5 USD</td>
+<td>降低 90%+</td>
+</tr>
+</tbody></table>
+<h2 id="2-为什么需要-OP-Stack？"><a href="#2-为什么需要-OP-Stack？" class="headerlink" title="2. 为什么需要 OP Stack？"></a>2. 为什么需要 OP Stack？</h2><h3 id="2-1-Rollup-解决方案"><a href="#2-1-Rollup-解决方案" class="headerlink" title="2.1 Rollup 解决方案"></a>2.1 Rollup 解决方案</h3><p>OP Stack 采用 <strong>Rollup</strong> 技术——将计算和状态存储移到链下（Layer2），只把交易数据和最终状态发布到链上（Layer1）。</p>
+<p><strong>工作原理类比：</strong> 想象你在玩一个复杂的棋局：</p>
+<ul>
+<li><strong>传统方式</strong>：每走一步都要裁判（以太坊主网）记录并验证</li>
+<li><strong>Rollup 方式</strong>：你们自己下完整局（L2 执行），最后只把完整棋谱交给裁判存档（L1 数据发布）</li>
+</ul>
+<p>这样做的好处：减轻主网计算负担、降低交易成本、保持安全性。</p>
+<h3 id="2-2-Optimistic-的”乐观”哲学"><a href="#2-2-Optimistic-的”乐观”哲学" class="headerlink" title="2.2 Optimistic 的”乐观”哲学"></a>2.2 Optimistic 的”乐观”哲学</h3><p>OP Stack 采用 <strong>Optimistic Rollup</strong>，核心理念是”乐观假设”：</p>
+<ul>
+<li><strong>默认信任</strong>：假设所有提交的状态都是正确的</li>
+<li><strong>挑战期机制</strong>：给予 7 天时间让任何人挑战错误状态</li>
+<li><strong>欺诈证明</strong>：只有在出现争议时才进行链上验证</li>
+</ul>
+<p>这就像是”先上车后补票”——大部分情况下大家都诚实，只有少数情况需要核查。</p>
+<h2 id="3-OP-Stack-整体架构"><a href="#3-OP-Stack-整体架构" class="headerlink" title="3. OP Stack 整体架构"></a>3. OP Stack 整体架构</h2><p>OP Stack 采用分层架构，每一层都有明确的职责：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────┐</span><br><span class="line">│                 L1 (以太坊主网)                      │</span><br><span class="line">│  ┌──────────────┐    ┌──────────────────────┐       │</span><br><span class="line">│  │ L1 桥接合约   │    │ 争议解决合约          │       │</span><br><span class="line">│  └──────────────┘    └──────────────────────┘       │</span><br><span class="line">└─────────────────────────────────────────────────────┘</span><br><span class="line">                         ↕</span><br><span class="line">┌─────────────────────────────────────────────────────┐</span><br><span class="line">│                 L2 执行与共识层                      │</span><br><span class="line">│  ┌──────────┐  ┌──────────┐  ┌──────────────┐       │</span><br><span class="line">│  │ op-geth  │◄─│ op-node  │◄─│ op-batcher   │       │</span><br><span class="line">│  └──────────┘  └──────────┘  └──────────────┘       │</span><br><span class="line">│       ↓             ↓                               │</span><br><span class="line">│  ┌──────────────┐  ┌─────────────────┐              │</span><br><span class="line">│  │ op-proposer  │  │  op-challenger  │              │</span><br><span class="line">│  └──────────────┘  └─────────────────┘              │</span><br><span class="line">└─────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键设计原则：</strong></p>
+<ul>
+<li><strong>数据可用性</strong>：所有交易数据都发布到 L1，确保任何人都能重建 L2 状态</li>
+<li><strong>模块化解耦</strong>：每个组件可以独立升级</li>
+<li><strong>最小信任假设</strong>：只需假设”至少有一个诚实的验证者存在”</li>
+</ul>
+<h2 id="4-核心组件详解"><a href="#4-核心组件详解" class="headerlink" title="4. 核心组件详解"></a>4. 核心组件详解</h2><h3 id="4-1-op-geth：执行引擎"><a href="#4-1-op-geth：执行引擎" class="headerlink" title="4.1 op-geth：执行引擎"></a>4.1 op-geth：执行引擎</h3><p><strong>角色定位：</strong> L2 的”大脑”，负责执行交易和维护状态</p>
+<p>op-geth 是基于以太坊官方 go-ethereum 客户端的定制版本，保持了 100% 的 EVM 兼容性。</p>
+<p><strong>核心功能：</strong></p>
+<ol>
+<li><strong>交易执行</strong>：接收用户交易，在 EVM 中执行智能合约代码，计算新状态</li>
+<li><strong>状态管理</strong>：维护完整的账户和合约状态树，使用 Archive 模式保存所有历史状态</li>
+<li><strong>与 op-node 协作</strong>：通过 Engine API 接收区块生产指令，执行交易并返回结果</li>
+</ol>
+<p><strong>关键特性：</strong></p>
+<p><strong>Gas 计费改进</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">总费用 = L2 执行费 + L1 数据费</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>L2 执行费</strong>：合约计算消耗（类似以太坊）</li>
+<li><strong>L1 数据费</strong>：将交易数据发布到 L1 的成本（主要开销）</li>
+</ul>
+<p><strong>区块生产方式</strong></p>
+<ul>
+<li>不同于以太坊的 PoW&#x2F;PoS，op-geth 由 Sequencer 主导区块生产</li>
+<li>支持固定的出块时间（如每 2 秒一个区块）</li>
+</ul>
+<h3 id="4-2-op-node：Rollup-共识协调者"><a href="#4-2-op-node：Rollup-共识协调者" class="headerlink" title="4.2 op-node：Rollup 共识协调者"></a>4.2 op-node：Rollup 共识协调者</h3><p><strong>角色定位：</strong> L2 的”协调员”，连接 L1 和 L2，负责共识逻辑</p>
+<p>如果说 op-geth 是执行者，那么 op-node 就是指挥官。</p>
+<p><strong>核心职责：</strong></p>
+<p><strong>1. 区块派生（Block Derivation）</strong></p>
+<p>这是 op-node 最核心的功能。它从 L1 上读取 Batcher 提交的交易批次，然后”派生”出 L2 区块。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">L1 区块 → 扫描 Batcher 交易 → 提取批次数据 → 解压缩</span><br><span class="line">  → 解析交易列表 → 构建 L2 区块 → 发送给 op-geth 执行</span><br></pre></td></tr></table></figure>
+
+<p><strong>为什么需要派生？</strong> 因为 L2 区块的权威来源是 L1 上的数据，而不是 Sequencer 的声明。即使 Sequencer 作恶或下线，任何人都可以通过 L1 数据重建完整的 L2 链。</p>
+<p><strong>2. Sequencer 模式 vs Verifier 模式</strong></p>
+<ul>
+<li><strong>Sequencer 模式</strong>：作为主节点运行，接收交易、排序、生产区块</li>
+<li><strong>Verifier 模式</strong>：作为从节点运行，完全依赖 L1 数据进行区块派生和验证</li>
+</ul>
+<p><strong>3. 三种区块状态</strong></p>
+<p>op-node 维护着区块的三种不同状态：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义</th>
+<th>确认时间</th>
+<th>安全保障</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Unsafe</strong></td>
+<td>刚由 Sequencer 生产</td>
+<td>2 秒</td>
+<td>可能被重组</td>
+</tr>
+<tr>
+<td><strong>Safe</strong></td>
+<td>已提交到 L1 并确认</td>
+<td>1-2 分钟</td>
+<td>数据可用性保证</td>
+</tr>
+<tr>
+<td><strong>Finalized</strong></td>
+<td>状态根已确认且过挑战期</td>
+<td>7 天</td>
+<td>可用于 L1 提款</td>
+</tr>
+</tbody></table>
+<h3 id="4-3-op-batcher：批量打包器"><a href="#4-3-op-batcher：批量打包器" class="headerlink" title="4.3 op-batcher：批量打包器"></a>4.3 op-batcher：批量打包器</h3><p><strong>角色定位：</strong> L2 到 L1 的”快递员”，负责将交易数据运送到主网</p>
+<p>Batcher 是整个系统中持续运营成本最高的组件——它需要不断向 L1 发送交易。</p>
+<p><strong>工作机制：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">L2 交易 → op-geth 执行 → op-node 区块 → op-batcher 收集</span><br><span class="line">  → 压缩打包 → 提交到 L1 → 验证者读取 → 重建 L2 状态</span><br></pre></td></tr></table></figure>
+
+<p><strong>核心功能：</strong></p>
+<p><strong>1. 交易收集与压缩</strong></p>
+<ul>
+<li>定期（如每 1 秒）从 op-node 拉取最新的 Unsafe 区块</li>
+<li>使用 zlib&#x2F;brotli 压缩数据（压缩率 5-10x）</li>
+<li>按照 Channel（通道）的概念组织数据</li>
+</ul>
+<p><strong>2. 批次提交方式</strong></p>
+<p>有两种提交方式：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>特点</th>
+<th>成本</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Calldata</strong></td>
+<td>永久存储</td>
+<td>高（每字节 16 gas）</td>
+<td>需要长期数据可用性</td>
+</tr>
+<tr>
+<td><strong>Blob (EIP-4844)</strong></td>
+<td>保留 30 天</td>
+<td>低（降低 90%）</td>
+<td>标准运营（推荐）</td>
+</tr>
+</tbody></table>
+<p><strong>3. 费用优化</strong></p>
+<ul>
+<li>监控 L1 Gas 价格波动，在低价时段批量提交</li>
+<li>支持交易失败后自动重发</li>
+<li>避免 nonce 冲突导致的交易卡顿</li>
+</ul>
+<h3 id="4-4-op-proposer：状态提议器"><a href="#4-4-op-proposer：状态提议器" class="headerlink" title="4.4 op-proposer：状态提议器"></a>4.4 op-proposer：状态提议器</h3><p><strong>角色定位：</strong> L2 到 L1 的”公证员”，定期提交状态根声明</p>
+<p>Proposer 向以太坊主网”宣告”L2 的当前状态，这些声明在经过挑战期后成为最终确定的状态。</p>
+<p><strong>核心功能：</strong></p>
+<p><strong>1. 状态根提交</strong></p>
+<p>什么是状态根？</p>
+<ul>
+<li>状态根是整个 L2 状态的”指纹”（Merkle Root）</li>
+<li>它唯一确定了某个区块高度时所有账户和合约的状态</li>
+</ul>
+<p><strong>工作流程：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 从 op-node 获取 Safe 区块的状态根</span><br><span class="line">2. 调用 L1 的 DisputeGameFactory 合约创建提议</span><br><span class="line">3. 质押 Bond（如 0.08 ETH）作为诚实保证金</span><br><span class="line">4. 提议进入 7 天挑战期</span><br><span class="line">5. 无人挑战 → 提议被接受 → 取回 Bond</span><br><span class="line">6. 挑战成功 → 提议被拒绝 → Bond 被罚没</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 提议间隔控制</strong></p>
+<p>Proposer 不会每个区块都提交状态根（成本太高），而是每隔固定时间提交一次（如 15 分钟），平衡安全性和成本。</p>
+<p><strong>3. 最终性推进</strong></p>
+<p>只有经过挑战期的状态根才能用于：</p>
+<ul>
+<li>用户从 L2 提款到 L1</li>
+<li>跨链消息的最终确认</li>
+<li>资产桥的安全释放</li>
+</ul>
+<p><strong>经济模型：</strong></p>
+<ul>
+<li><strong>Bond 质押</strong>：每次提议需质押 0.08 ETH（可配置）</li>
+<li><strong>L1 Gas 费</strong>：提交提议的交易费用</li>
+<li><strong>诚实提议</strong>：7 天后取回 Bond（零成本）</li>
+<li><strong>错误提议</strong>：失去全部 Bond（被 Challenger 夺取）</li>
+</ul>
+<h3 id="4-5-op-challenger：争议挑战器"><a href="#4-5-op-challenger：争议挑战器" class="headerlink" title="4.5 op-challenger：争议挑战器"></a>4.5 op-challenger：争议挑战器</h3><p><strong>角色定位：</strong> 系统的”安全卫士”，监督并挑战错误的状态提议</p>
+<p>Challenger 是 OP Stack 安全模型的核心——它实现了”只需一个诚实节点”的信任假设。</p>
+<p><strong>核心职责：</strong></p>
+<p><strong>1. 持续监控</strong></p>
+<ul>
+<li>7x24 小时监听 L1 上所有新创建的争议游戏</li>
+<li>从 op-node 获取本地计算的正确状态根</li>
+<li>对比链上提议与本地状态，检测差异</li>
+</ul>
+<p><strong>2. 发起挑战</strong></p>
+<p>当检测到错误提议时：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 质押 Bond 创建挑战</span><br><span class="line">2. 参与多轮交互式欺诈证明游戏</span><br><span class="line">3. 最终提交单步证明证明 Proposer 错误</span><br><span class="line">4. 胜利后夺取 Proposer 的 Bond</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. Fault Proof Game（欺诈证明游戏）</strong></p>
+<p>这是 OP Stack V2 的核心创新机制：</p>
+<p><strong>游戏流程：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">第 1 轮：二分查找开始</span><br><span class="line">  Challenger 质疑：区块 1000-1100 中某处有错误</span><br><span class="line">  → 要求 Proposer 证明区块 1050 的状态</span><br><span class="line"></span><br><span class="line">第 2-N 轮：持续二分</span><br><span class="line">  → 缩小范围：100 个区块 → 50 → 25 → ... → 1 个区块</span><br><span class="line">  → 继续缩小：1 个区块 → 单个交易 → 单个 EVM 指令</span><br><span class="line"></span><br><span class="line">最后一轮：单步证明</span><br><span class="line">  → 定位到单个 MIPS 指令</span><br><span class="line">  → Challenger 在 L1 上实际执行这条指令</span><br><span class="line">  → 证明 Proposer 声称的输出错误</span><br><span class="line">  → Challenger 胜利，夺取 Bond</span><br></pre></td></tr></table></figure>
+
+<p><strong>CANNON 证明系统：</strong></p>
+<ul>
+<li>将 op-geth 和 op-node 编译为 MIPS 指令集</li>
+<li>创建 MIPS 虚拟机的链上实现</li>
+<li>在争议时，在 L1 上执行单个 MIPS 指令进行验证</li>
+</ul>
+<p><strong>为什么这套机制有效？</strong></p>
+<p><strong>经济激励：</strong></p>
+<ul>
+<li>挑战成功 → 获得 Proposer 的 Bond</li>
+<li>挑战失败 → 失去自己的 Bond</li>
+<li>诚实参与是最优策略</li>
+</ul>
+<p><strong>1-of-N 诚实假设：</strong></p>
+<ul>
+<li>只需一个诚实 Challenger 存在即可保证安全</li>
+<li>任何人都可以无需许可地运行 Challenger</li>
+</ul>
+<p><strong>谁应该运行 Challenger？</strong></p>
+<ul>
+<li>桥接服务提供商：保护管理的资金</li>
+<li>大户投资者：保护大额 L2 资产</li>
+<li>生态贡献者：为公共利益提供监督</li>
+</ul>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><ul>
+<li><strong>OP Stack 是一个完整的 L2 建设工具包</strong>：包含执行、共识、数据发布、争议解决等所有模块</li>
+<li><strong>采用 Optimistic Rollup 技术</strong>：通过”乐观假设”实现高性能，7 天挑战期保证安全</li>
+<li><strong>1-of-N 安全假设</strong>：只需一个诚实 Challenger 即可保护全网</li>
+<li><strong>性能提升显著</strong>：相比以太坊 L1，TPS 提升 10-100 倍，成本降低 90%+</li>
+<li><strong>完全 EVM 兼容</strong>：现有 DApp 可无缝迁移</li>
+</ul>
+<p><strong>Hooray！OP Stack 深度解析完成！！！</strong></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/10/04/solana-spl-token/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Layer2/" title="Layer2">
+                        #Layer2
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/OPStack/" title="OPStack">
+                        #OPStack
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9"><span class="toc-text">1. 核心要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81-OP-Stack%EF%BC%9F"><span class="toc-text">2. 为什么需要 OP Stack？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Rollup-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">2.1 Rollup 解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Optimistic-%E7%9A%84%E2%80%9D%E4%B9%90%E8%A7%82%E2%80%9D%E5%93%B2%E5%AD%A6"><span class="toc-text">2.2 Optimistic 的”乐观”哲学</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-OP-Stack-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="toc-text">3. OP Stack 整体架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. 核心组件详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-op-geth%EF%BC%9A%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E"><span class="toc-text">4.1 op-geth：执行引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-op-node%EF%BC%9ARollup-%E5%85%B1%E8%AF%86%E5%8D%8F%E8%B0%83%E8%80%85"><span class="toc-text">4.2 op-node：Rollup 共识协调者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-op-batcher%EF%BC%9A%E6%89%B9%E9%87%8F%E6%89%93%E5%8C%85%E5%99%A8"><span class="toc-text">4.3 op-batcher：批量打包器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-op-proposer%EF%BC%9A%E7%8A%B6%E6%80%81%E6%8F%90%E8%AE%AE%E5%99%A8"><span class="toc-text">4.4 op-proposer：状态提议器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-op-challenger%EF%BC%9A%E4%BA%89%E8%AE%AE%E6%8C%91%E6%88%98%E5%99%A8"><span class="toc-text">4.5 op-challenger：争议挑战器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%80%BB%E7%BB%93"><span class="toc-text">5. 总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Layer2%20%E2%80%94%E2%80%94%20OP%20Stack%20%E4%BB%8B%E7%BB%8D + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F10%2F05%2Fop-stack-intro-part5%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

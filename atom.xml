@@ -6,7 +6,7 @@
   <link href="https://faniyang.github.io/atom.xml" rel="self"/>
   
   <link href="https://faniyang.github.io/"/>
-  <updated>2025-10-03T05:43:49.687Z</updated>
+  <updated>2025-10-05T05:21:18.935Z</updated>
   <id>https://faniyang.github.io/</id>
   
   <author>
@@ -15,6 +15,60 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Layer2 —— OP Stack 介绍</title>
+    <link href="https://faniyang.github.io/2025/10/05/op-stack-intro-part5/"/>
+    <id>https://faniyang.github.io/2025/10/05/op-stack-intro-part5/</id>
+    <published>2025-10-05T05:19:37.000Z</published>
+    <updated>2025-10-05T05:21:18.935Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;OP Stack 是由 Optimism 团队开发的模块化区块链技术栈，让开发者能够像”搭积木”一样构建自己的 Layer2 网络。可以将 OP Stack 想象成一个”区块链建设套件”，里面包含了构建高性能区块链所需的所有核心组件。&lt;/p&gt;
+&lt;h2</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
+    
+    <category term="OPStack" scheme="https://faniyang.github.io/tags/OPStack/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Solana —— SPL TOKEN 简单合约</title>
+    <link href="https://faniyang.github.io/2025/10/04/solana-spl-token/"/>
+    <id>https://faniyang.github.io/2025/10/04/solana-spl-token/</id>
+    <published>2025-10-04T05:14:52.000Z</published>
+    <updated>2025-10-05T13:09:42.618Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本节实现了一个 Solana SPL Token 程序，包括链上智能合约和客户端调用代码。主要功能包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建新的 SPL Token&lt;/li&gt;
+&lt;li&gt;铸造代币到用户账户&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;1-核心概念&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Solana" scheme="https://faniyang.github.io/tags/Solana/"/>
+    
+  </entry>
   
   <entry>
     <title>Solana —— Token 基础</title>
@@ -440,54 +494,6 @@
     <category term="Blockscout" scheme="https://faniyang.github.io/tags/Blockscout/"/>
     
     <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Layer2 —— OP Stack 部署指南</title>
-    <link href="https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/"/>
-    <id>https://faniyang.github.io/2025/09/15/op-stack-deployment-part1/</id>
-    <published>2025-09-15T09:54:48.000Z</published>
-    <updated>2025-09-18T15:45:57.132Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;OP Stack 是 Optimism 开发的模块化区块链技术栈，允许开发者轻松创建自己的 Layer2 网络。本指南提供了在</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Layer2" scheme="https://faniyang.github.io/tags/Layer2/"/>
-    
-    <category term="OPStack" scheme="https://faniyang.github.io/tags/OPStack/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>慢练勤修，别急放松 | 道家武术馆一月清修</title>
-    <link href="https://faniyang.github.io/2025/02/22/taichi-28/"/>
-    <id>https://faniyang.github.io/2025/02/22/taichi-28/</id>
-    <published>2025-02-22T07:01:09.000Z</published>
-    <updated>2025-09-15T13:20:17.755Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;一月上旬读了三本书 ——《36 万遍感恩的奇迹》、《清醒地活》、《内在工程》，这三本书中都有部分篇幅讲述了阴阳哲学，让我对道家文化产生了浓厚兴趣，再次看到之前觉得平平无奇的太极图的第一反应竟然是 —— &lt;em&gt;It is</summary>
-        
-      
-    
-    
-    
-    
-    <category term="Flow" scheme="https://faniyang.github.io/tags/Flow/"/>
     
   </entry>
   
