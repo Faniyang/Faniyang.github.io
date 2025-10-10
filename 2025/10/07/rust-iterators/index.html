@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Rust —— 迭代器 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Rust —— 迭代器</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Rust/" title="Rust">
+                    #Rust
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>迭代器（Iterator）是 Rust 中用于处理元素序列的强大工具。迭代器模式允许你对一系列项进行某些操作，而无需手动管理索引或循环逻辑。Rust 的迭代器是惰性的（lazy），只在需要时才会执行计算，这使得它们既高效又灵活。</p>
+<h2 id="1-迭代器基础"><a href="#1-迭代器基础" class="headerlink" title="1. 迭代器基础"></a>1. 迭代器基础</h2><h3 id="1-1-创建迭代器"><a href="#1-1-创建迭代器" class="headerlink" title="1.1 创建迭代器"></a>1.1 创建迭代器</h3><p>在 Rust 中，所有集合类型都可以创建迭代器：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建迭代器（惰性的，此时不会执行任何操作）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1_iter</span> = v1.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用 for 循环消费迭代器</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">val</span> <span class="keyword">in</span> v1_iter &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;值: &#123;&#125;&quot;</span>, val);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-三种迭代方法"><a href="#1-2-三种迭代方法" class="headerlink" title="1.2 三种迭代方法"></a>1.2 三种迭代方法</h3><p>Rust 提供三种获取迭代器的方法，它们在所有权处理上有所不同：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// iter() - 返回不可变引用</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">val</span> <span class="keyword">in</span> v.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;不可变引用: &#123;&#125;&quot;</span>, val); <span class="comment">// val 的类型是 &amp;i32</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// iter_mut() - 返回可变引用</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v_mut</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">val</span> <span class="keyword">in</span> v_mut.<span class="title function_ invoke__">iter_mut</span>() &#123;</span><br><span class="line">        *val += <span class="number">1</span>; <span class="comment">// val 的类型是 &amp;mut i32</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;修改后: &#123;:?&#125;&quot;</span>, v_mut);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// into_iter() - 获取所有权</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">val</span> <span class="keyword">in</span> v.<span class="title function_ invoke__">into_iter</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;获取所有权: &#123;&#125;&quot;</span>, val); <span class="comment">// val 的类型是 i32</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// println!(&quot;&#123;:?&#125;&quot;, v); // 错误！v 已被移动</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Iterator-Trait"><a href="#2-Iterator-Trait" class="headerlink" title="2. Iterator Trait"></a>2. Iterator Trait</h2><h3 id="2-1-Iterator-trait-定义"><a href="#2-1-Iterator-trait-定义" class="headerlink" title="2.1 Iterator trait 定义"></a>2.1 Iterator trait 定义</h3><p>所有迭代器都实现了 <code>Iterator</code> trait：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Iterator</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 还有许多提供默认实现的方法...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-手动调用-next-方法"><a href="#2-2-手动调用-next-方法" class="headerlink" title="2.2 手动调用 next 方法"></a>2.2 手动调用 next 方法</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v1_iter</span> = v1.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(v1_iter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="number">1</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(v1_iter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="number">2</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(v1_iter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(&amp;<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(v1_iter.<span class="title function_ invoke__">next</span>(), <span class="literal">None</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：调用 <code>next</code> 需要 <code>mut</code>，因为迭代器内部状态会改变。</p>
+<h3 id="2-3-实现自定义迭代器"><a href="#2-3-实现自定义迭代器" class="headerlink" title="2.3 实现自定义迭代器"></a>2.3 实现自定义迭代器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    count: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> Counter &#123;</span><br><span class="line">        Counter &#123; count: <span class="number">0</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span> <span class="keyword">for</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">u32</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.count &lt; <span class="number">5</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.count += <span class="number">1</span>;</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(<span class="keyword">self</span>.count)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">counter</span> = Counter::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(<span class="number">1</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(<span class="number">2</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(<span class="number">3</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(<span class="number">4</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="title function_ invoke__">Some</span>(<span class="number">5</span>));</span><br><span class="line">    <span class="built_in">assert_eq!</span>(counter.<span class="title function_ invoke__">next</span>(), <span class="literal">None</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-消费适配器（Consuming-Adaptors）"><a href="#3-消费适配器（Consuming-Adaptors）" class="headerlink" title="3. 消费适配器（Consuming Adaptors）"></a>3. 消费适配器（Consuming Adaptors）</h2><p>消费适配器会调用 <code>next</code> 方法，消耗迭代器：</p>
+<h3 id="3-1-sum-求和"><a href="#3-1-sum-求和" class="headerlink" title="3.1 sum - 求和"></a>3.1 sum - 求和</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1_iter</span> = v1.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">total</span>: <span class="type">i32</span> = v1_iter.<span class="title function_ invoke__">sum</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;总和: &#123;&#125;&quot;</span>, total); <span class="comment">// 6</span></span><br><span class="line">    <span class="comment">// println!(&quot;&#123;:?&#125;&quot;, v1_iter); // 错误！迭代器已被消费</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-collect-收集为集合"><a href="#3-2-collect-收集为集合" class="headerlink" title="3.2 collect - 收集为集合"></a>3.2 collect - 收集为集合</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v2</span>: <span class="type">Vec</span>&lt;_&gt; = v1.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;收集结果: &#123;:?&#125;&quot;</span>, v2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-其他消费适配器"><a href="#3-3-其他消费适配器" class="headerlink" title="3.3 其他消费适配器"></a>3.3 其他消费适配器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// count - 计数</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">count</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">count</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;元素数量: &#123;&#125;&quot;</span>, count);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// last - 最后一个元素</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">last</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">last</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;最后元素: &#123;:?&#125;&quot;</span>, last);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// max 和 min</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">max</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">max</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">min</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">min</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;最大值: &#123;:?&#125;, 最小值: &#123;:?&#125;&quot;</span>, max, min);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-迭代器适配器（Iterator-Adaptors）"><a href="#4-迭代器适配器（Iterator-Adaptors）" class="headerlink" title="4. 迭代器适配器（Iterator Adaptors）"></a>4. 迭代器适配器（Iterator Adaptors）</h2><p>迭代器适配器会产生新的迭代器，它们是惰性的：</p>
+<h3 id="4-1-map-映射转换"><a href="#4-1-map-映射转换" class="headerlink" title="4.1 map - 映射转换"></a>4.1 map - 映射转换</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v1</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// map 是惰性的，不会立即执行</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v2</span>: <span class="type">Vec</span>&lt;_&gt; = v1.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|x| x + <span class="number">1</span>)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;映射后: &#123;:?&#125;&quot;</span>, v2); <span class="comment">// [2, 3, 4]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-filter-过滤元素"><a href="#4-2-filter-过滤元素" class="headerlink" title="4.2 filter - 过滤元素"></a>4.2 filter - 过滤元素</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(PartialEq, Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Shoe</span> &#123;</span><br><span class="line">    size: <span class="type">u32</span>,</span><br><span class="line">    style: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">shoes_in_size</span>(shoes: <span class="type">Vec</span>&lt;Shoe&gt;, shoe_size: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;Shoe&gt; &#123;</span><br><span class="line">    shoes.<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|s| s.size == shoe_size)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">shoes</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        Shoe &#123; size: <span class="number">10</span>, style: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;运动鞋&quot;</span>) &#125;,</span><br><span class="line">        Shoe &#123; size: <span class="number">13</span>, style: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;凉鞋&quot;</span>) &#125;,</span><br><span class="line">        Shoe &#123; size: <span class="number">10</span>, style: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;靴子&quot;</span>) &#125;,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">in_my_size</span> = <span class="title function_ invoke__">shoes_in_size</span>(shoes, <span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;我的尺码: &#123;:?&#125;&quot;</span>, in_my_size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-常用迭代器适配器"><a href="#4-3-常用迭代器适配器" class="headerlink" title="4.3 常用迭代器适配器"></a>4.3 常用迭代器适配器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// take - 获取前 n 个元素</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first_three</span>: <span class="type">Vec</span>&lt;_&gt; = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">take</span>(<span class="number">3</span>)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;前三个: &#123;:?&#125;&quot;</span>, first_three);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// skip - 跳过前 n 个元素</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">after_two</span>: <span class="type">Vec</span>&lt;_&gt; = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">skip</span>(<span class="number">2</span>)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;跳过两个: &#123;:?&#125;&quot;</span>, after_two);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// enumerate - 添加索引</span></span><br><span class="line">    <span class="keyword">for</span> (index, value) <span class="keyword">in</span> numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;索引 &#123;&#125;: 值 &#123;&#125;&quot;</span>, index, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// zip - 组合两个迭代器</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">letters</span> = <span class="built_in">vec!</span>[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">zipped</span>: <span class="type">Vec</span>&lt;_&gt; = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">zip</span>(letters.<span class="title function_ invoke__">iter</span>()).<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;组合结果: &#123;:?&#125;&quot;</span>, zipped);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-链式调用"><a href="#5-链式调用" class="headerlink" title="5. 链式调用"></a>5. 链式调用</h2><p>迭代器的强大之处在于可以链式调用多个方法：</p>
+<h3 id="5-1-复杂的数据处理"><a href="#5-1-复杂的数据处理" class="headerlink" title="5.1 复杂的数据处理"></a>5.1 复杂的数据处理</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span>: <span class="type">i32</span> = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|&amp;&amp;x| x % <span class="number">2</span> == <span class="number">0</span>)  <span class="comment">// 过滤偶数</span></span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|&amp;x| x * x)            <span class="comment">// 平方</span></span><br><span class="line">        .<span class="title function_ invoke__">sum</span>();                      <span class="comment">// 求和</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;偶数平方和: &#123;&#125;&quot;</span>, result); <span class="comment">// 220</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-字符串处理"><a href="#5-2-字符串处理" class="headerlink" title="5.2 字符串处理"></a>5.2 字符串处理</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">text</span> = <span class="string">&quot;hello world rust programming&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">long_words</span>: <span class="type">Vec</span>&lt;&amp;<span class="type">str</span>&gt; = text.<span class="title function_ invoke__">split_whitespace</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|word| word.<span class="title function_ invoke__">len</span>() &gt; <span class="number">5</span>)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;长单词: &#123;:?&#125;&quot;</span>, long_words);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-结构化数据处理"><a href="#5-3-结构化数据处理" class="headerlink" title="5.3 结构化数据处理"></a>5.3 结构化数据处理</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    age: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">people</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        Person &#123; name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Alice&quot;</span>), age: <span class="number">30</span> &#125;,</span><br><span class="line">        Person &#123; name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Bob&quot;</span>), age: <span class="number">25</span> &#125;,</span><br><span class="line">        Person &#123; name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Charlie&quot;</span>), age: <span class="number">35</span> &#125;,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">names</span>: <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; = people.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|p| p.age &gt; <span class="number">28</span>)</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|p| p.name.<span class="title function_ invoke__">clone</span>())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;年龄大于28的人: &#123;:?&#125;&quot;</span>, names);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-实用方法"><a href="#6-实用方法" class="headerlink" title="6. 实用方法"></a>6. 实用方法</h2><h3 id="6-1-find-查找元素"><a href="#6-1-find-查找元素" class="headerlink" title="6.1 find - 查找元素"></a>6.1 find - 查找元素</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first_even</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">find</span>(|&amp;&amp;x| x % <span class="number">2</span> == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> first_even &#123;</span><br><span class="line">        <span class="title function_ invoke__">Some</span>(&amp;n) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;第一个偶数: &#123;&#125;&quot;</span>, n),</span><br><span class="line">        <span class="literal">None</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;没有偶数&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-any-和-all-条件检查"><a href="#6-2-any-和-all-条件检查" class="headerlink" title="6.2 any 和 all - 条件检查"></a>6.2 any 和 all - 条件检查</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">has_even</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">any</span>(|&amp;x| x % <span class="number">2</span> == <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;有偶数: &#123;&#125;&quot;</span>, has_even);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">all_positive</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">all</span>(|&amp;x| x &gt; <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;全是正数: &#123;&#125;&quot;</span>, all_positive);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-fold-累积计算"><a href="#6-3-fold-累积计算" class="headerlink" title="6.3 fold - 累积计算"></a>6.3 fold - 累积计算</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// fold 的第一个参数是初始值，第二个是累积函数</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sum</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">fold</span>(<span class="number">0</span>, |acc, &amp;x| acc + x);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;总和: &#123;&#125;&quot;</span>, sum);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">product</span> = numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">fold</span>(<span class="number">1</span>, |acc, &amp;x| acc * x);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;乘积: &#123;&#125;&quot;</span>, product);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-flat-map-扁平化映射"><a href="#6-4-flat-map-扁平化映射" class="headerlink" title="6.4 flat_map - 扁平化映射"></a>6.4 flat_map - 扁平化映射</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">words</span> = <span class="built_in">vec!</span>[<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">chars</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = words.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">flat_map</span>(|word| word.<span class="title function_ invoke__">chars</span>())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;所有字符: &#123;:?&#125;&quot;</span>, chars);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-迭代器与性能"><a href="#7-迭代器与性能" class="headerlink" title="7. 迭代器与性能"></a>7. 迭代器与性能</h2><h3 id="7-1-零成本抽象"><a href="#7-1-零成本抽象" class="headerlink" title="7.1 零成本抽象"></a>7.1 零成本抽象</h3><p>Rust 的迭代器是零成本抽象，编译后的性能与手写循环相当：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用迭代器</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">sum_iterator</span>(numbers: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">sum</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用循环</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">sum_loop</span>(numbers: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">sum</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> &amp;n <span class="keyword">in</span> numbers &#123;</span><br><span class="line">        sum += n;</span><br><span class="line">    &#125;</span><br><span class="line">    sum</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 两者编译后的性能几乎相同</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-惰性求值的优势"><a href="#7-2-惰性求值的优势" class="headerlink" title="7.2 惰性求值的优势"></a>7.2 惰性求值的优势</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这些操作不会立即执行</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">iter</span> = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|x| &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;映射 &#123;&#125;&quot;</span>, x);</span><br><span class="line">            x * <span class="number">2</span></span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|x| &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;过滤 &#123;&#125;&quot;</span>, x);</span><br><span class="line">            x &gt; &amp;<span class="number">5</span></span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 只有在需要结果时才会执行</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;开始收集:&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Vec</span>&lt;_&gt; = iter.<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;结果: &#123;:?&#125;&quot;</span>, result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-高级用法"><a href="#8-高级用法" class="headerlink" title="8. 高级用法"></a>8. 高级用法</h2><h3 id="8-1-组合多个迭代器"><a href="#8-1-组合多个迭代器" class="headerlink" title="8.1 组合多个迭代器"></a>8.1 组合多个迭代器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">counter</span> = Counter::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sum</span>: <span class="type">u32</span> = counter</span><br><span class="line">        .<span class="title function_ invoke__">zip</span>(Counter::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">skip</span>(<span class="number">1</span>))</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|(a, b)| a * b)</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|x| x % <span class="number">3</span> == <span class="number">0</span>)</span><br><span class="line">        .<span class="title function_ invoke__">sum</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;结果: &#123;&#125;&quot;</span>, sum); <span class="comment">// 18</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    count: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> Counter &#123;</span><br><span class="line">        Counter &#123; count: <span class="number">0</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Iterator</span> <span class="keyword">for</span> <span class="title class_">Counter</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">Item</span> = <span class="type">u32</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">next</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="keyword">Self</span>::Item&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.count &lt; <span class="number">5</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.count += <span class="number">1</span>;</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(<span class="keyword">self</span>.count)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="literal">None</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-范围迭代器"><a href="#8-2-范围迭代器" class="headerlink" title="8.2 范围迭代器"></a>8.2 范围迭代器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="comment">// 范围也是迭代器</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">5</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 反向迭代</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> (<span class="number">0</span>..<span class="number">5</span>).<span class="title function_ invoke__">rev</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 步长迭代</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> (<span class="number">0</span>..<span class="number">10</span>).<span class="title function_ invoke__">step_by</span>(<span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-3-partition-分区"><a href="#8-3-partition-分区" class="headerlink" title="8.3 partition - 分区"></a>8.3 partition - 分区</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> (evens, odds): (<span class="type">Vec</span>&lt;_&gt;, <span class="type">Vec</span>&lt;_&gt;) = numbers.<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">partition</span>(|&amp;x| x % <span class="number">2</span> == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;偶数: &#123;:?&#125;&quot;</span>, evens);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;奇数: &#123;:?&#125;&quot;</span>, odds);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-常见陷阱与最佳实践"><a href="#9-常见陷阱与最佳实践" class="headerlink" title="9. 常见陷阱与最佳实践"></a>9. 常见陷阱与最佳实践</h2><h3 id="9-1-避免不必要的-collect"><a href="#9-1-避免不必要的-collect" class="headerlink" title="9.1 避免不必要的 collect"></a>9.1 避免不必要的 collect</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不好的做法 - 创建了临时 Vec</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">sum_of_squares_bad</span>(numbers: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">squares</span>: <span class="type">Vec</span>&lt;_&gt; = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|x| x * x)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    squares.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">sum</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 好的做法 - 直接链式调用</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">sum_of_squares_good</span>(numbers: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|x| x * x)</span><br><span class="line">        .<span class="title function_ invoke__">sum</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;平方和: &#123;&#125;&quot;</span>, <span class="title function_ invoke__">sum_of_squares_good</span>(&amp;numbers));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-2-注意迭代器的消费"><a href="#9-2-注意迭代器的消费" class="headerlink" title="9.2 注意迭代器的消费"></a>9.2 注意迭代器的消费</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">iter</span> = v.<span class="title function_ invoke__">iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 错误示例：迭代器只能使用一次</span></span><br><span class="line">    <span class="comment">// let sum: i32 = iter.sum();</span></span><br><span class="line">    <span class="comment">// let count = iter.count(); // 错误！iter 已被消费</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正确做法：重新创建迭代器</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sum</span>: <span class="type">i32</span> = v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">sum</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">count</span> = v.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">count</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;总和: &#123;&#125;, 数量: &#123;&#125;&quot;</span>, sum, count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-3-使用迭代器而非索引"><a href="#9-3-使用迭代器而非索引" class="headerlink" title="9.3 使用迭代器而非索引"></a>9.3 使用迭代器而非索引</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 不推荐：使用索引</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..numbers.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, numbers[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 推荐：直接迭代</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">num</span> <span class="keyword">in</span> &amp;numbers &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, num);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 需要索引时使用 enumerate</span></span><br><span class="line">    <span class="keyword">for</span> (index, num) <span class="keyword">in</span> numbers.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;索引 &#123;&#125;: &#123;&#125;&quot;</span>, index, num);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-实战案例"><a href="#10-实战案例" class="headerlink" title="10. 实战案例"></a>10. 实战案例</h2><h3 id="10-1-统计单词频率"><a href="#10-1-统计单词频率" class="headerlink" title="10.1 统计单词频率"></a>10.1 统计单词频率</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">word_frequency</span>(text: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> HashMap&lt;<span class="type">String</span>, <span class="type">usize</span>&gt; &#123;</span><br><span class="line">    text.<span class="title function_ invoke__">split_whitespace</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|word| word.<span class="title function_ invoke__">to_lowercase</span>())</span><br><span class="line">        .<span class="title function_ invoke__">fold</span>(HashMap::<span class="title function_ invoke__">new</span>(), |<span class="keyword">mut</span> map, word| &#123;</span><br><span class="line">            *map.<span class="title function_ invoke__">entry</span>(word).<span class="title function_ invoke__">or_insert</span>(<span class="number">0</span>) += <span class="number">1</span>;</span><br><span class="line">            map</span><br><span class="line">        &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">text</span> = <span class="string">&quot;Hello world hello Rust world&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">freq</span> = <span class="title function_ invoke__">word_frequency</span>(text);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> freq &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, word, count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-2-数据转换管道"><a href="#10-2-数据转换管道" class="headerlink" title="10.2 数据转换管道"></a>10.2 数据转换管道</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Product</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    price: <span class="type">f64</span>,</span><br><span class="line">    category: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">products</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        Product &#123; name: <span class="string">&quot;笔记本&quot;</span>.<span class="title function_ invoke__">to_string</span>(), price: <span class="number">5000.0</span>, category: <span class="string">&quot;电子&quot;</span>.<span class="title function_ invoke__">to_string</span>() &#125;,</span><br><span class="line">        Product &#123; name: <span class="string">&quot;鼠标&quot;</span>.<span class="title function_ invoke__">to_string</span>(), price: <span class="number">100.0</span>, category: <span class="string">&quot;电子&quot;</span>.<span class="title function_ invoke__">to_string</span>() &#125;,</span><br><span class="line">        Product &#123; name: <span class="string">&quot;书籍&quot;</span>.<span class="title function_ invoke__">to_string</span>(), price: <span class="number">50.0</span>, category: <span class="string">&quot;图书&quot;</span>.<span class="title function_ invoke__">to_string</span>() &#125;,</span><br><span class="line">        Product &#123; name: <span class="string">&quot;键盘&quot;</span>.<span class="title function_ invoke__">to_string</span>(), price: <span class="number">300.0</span>, category: <span class="string">&quot;电子&quot;</span>.<span class="title function_ invoke__">to_string</span>() &#125;,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找出电子类别中价格超过200的产品名称</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">expensive_electronics</span>: <span class="type">Vec</span>&lt;<span class="type">String</span>&gt; = products.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|p| p.category == <span class="string">&quot;电子&quot;</span>)</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|p| p.price &gt; <span class="number">200.0</span>)</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|p| p.name.<span class="title function_ invoke__">clone</span>())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;昂贵的电子产品: &#123;:?&#125;&quot;</span>, expensive_electronics);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-3-矩阵转置"><a href="#10-3-矩阵转置" class="headerlink" title="10.3 矩阵转置"></a>10.3 矩阵转置</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">transpose</span>(matrix: <span class="type">Vec</span>&lt;<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;&gt;) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> matrix.<span class="title function_ invoke__">is_empty</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">vec!</span>[];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rows</span> = matrix.<span class="title function_ invoke__">len</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">cols</span> = matrix[<span class="number">0</span>].<span class="title function_ invoke__">len</span>();</span><br><span class="line"></span><br><span class="line">    (<span class="number">0</span>..cols)</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|col| &#123;</span><br><span class="line">            (<span class="number">0</span>..rows)</span><br><span class="line">                .<span class="title function_ invoke__">map</span>(|row| matrix[row][col])</span><br><span class="line">                .<span class="title function_ invoke__">collect</span>()</span><br><span class="line">        &#125;)</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">matrix</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">        <span class="built_in">vec!</span>[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>],</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">transposed</span> = <span class="title function_ invoke__">transpose</span>(matrix);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">row</span> <span class="keyword">in</span> transposed &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, row);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-4-查找重复元素"><a href="#10-4-查找重复元素" class="headerlink" title="10.4 查找重复元素"></a>10.4 查找重复元素</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">find_duplicates</span>(numbers: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">seen</span> = HashSet::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">duplicates</span> = HashSet::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">    numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter</span>(|&amp;&amp;num| !seen.<span class="title function_ invoke__">insert</span>(num))</span><br><span class="line">        .for_each(|&amp;num| &#123; duplicates.<span class="title function_ invoke__">insert</span>(num); &#125;);</span><br><span class="line"></span><br><span class="line">    duplicates.<span class="title function_ invoke__">into_iter</span>().<span class="title function_ invoke__">collect</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">6</span>];</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">dups</span> = <span class="title function_ invoke__">find_duplicates</span>(&amp;numbers);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;重复的元素: &#123;:?&#125;&quot;</span>, dups);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-5-分组和聚合"><a href="#10-5-分组和聚合" class="headerlink" title="10.5 分组和聚合"></a>10.5 分组和聚合</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Sale</span> &#123;</span><br><span class="line">    product: <span class="type">String</span>,</span><br><span class="line">    amount: <span class="type">f64</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">group_by_product</span>(sales: <span class="type">Vec</span>&lt;Sale&gt;) <span class="punctuation">-&gt;</span> HashMap&lt;<span class="type">String</span>, <span class="type">f64</span>&gt; &#123;</span><br><span class="line">    sales.<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">fold</span>(HashMap::<span class="title function_ invoke__">new</span>(), |<span class="keyword">mut</span> map, sale| &#123;</span><br><span class="line">            *map.<span class="title function_ invoke__">entry</span>(sale.product).<span class="title function_ invoke__">or_insert</span>(<span class="number">0.0</span>) += sale.amount;</span><br><span class="line">            map</span><br><span class="line">        &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">sales</span> = <span class="built_in">vec!</span>[</span><br><span class="line">        Sale &#123; product: <span class="string">&quot;苹果&quot;</span>.<span class="title function_ invoke__">to_string</span>(), amount: <span class="number">100.0</span> &#125;,</span><br><span class="line">        Sale &#123; product: <span class="string">&quot;香蕉&quot;</span>.<span class="title function_ invoke__">to_string</span>(), amount: <span class="number">50.0</span> &#125;,</span><br><span class="line">        Sale &#123; product: <span class="string">&quot;苹果&quot;</span>.<span class="title function_ invoke__">to_string</span>(), amount: <span class="number">150.0</span> &#125;,</span><br><span class="line">        Sale &#123; product: <span class="string">&quot;橙子&quot;</span>.<span class="title function_ invoke__">to_string</span>(), amount: <span class="number">80.0</span> &#125;,</span><br><span class="line">        Sale &#123; product: <span class="string">&quot;香蕉&quot;</span>.<span class="title function_ invoke__">to_string</span>(), amount: <span class="number">30.0</span> &#125;,</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">totals</span> = <span class="title function_ invoke__">group_by_product</span>(sales);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (product, total) <span class="keyword">in</span> totals &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;: &#123;:.2&#125;&quot;</span>, product, total);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-迭代器与错误处理"><a href="#11-迭代器与错误处理" class="headerlink" title="11. 迭代器与错误处理"></a>11. 迭代器与错误处理</h2><h3 id="11-1-filter-map-过滤和映射"><a href="#11-1-filter-map-过滤和映射" class="headerlink" title="11.1 filter_map - 过滤和映射"></a>11.1 filter_map - 过滤和映射</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">strings</span> = <span class="built_in">vec!</span>[<span class="string">&quot;1&quot;</span>, <span class="string">&quot;2&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;4&quot;</span>, <span class="string">&quot;5&quot;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = strings.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter_map</span>(|s| s.<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">ok</span>())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;解析成功的数字: &#123;:?&#125;&quot;</span>, numbers);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-处理-Result-序列"><a href="#11-2-处理-Result-序列" class="headerlink" title="11.2 处理 Result 序列"></a>11.2 处理 Result 序列</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">strings</span> = <span class="built_in">vec!</span>[<span class="string">&quot;1&quot;</span>, <span class="string">&quot;2&quot;</span>, <span class="string">&quot;three&quot;</span>, <span class="string">&quot;4&quot;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 方法1: collect 到 Result</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">result</span>: <span class="type">Result</span>&lt;<span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;, _&gt; = strings.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map</span>(|s| s.parse::&lt;<span class="type">i32</span>&gt;())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">match</span> result &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(numbers) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;所有解析成功: &#123;:?&#125;&quot;</span>, numbers),</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(e) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;解析失败: &#123;&#125;&quot;</span>, e),</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 方法2: 使用 filter_map 跳过错误</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = strings.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">filter_map</span>(|s| s.<span class="title function_ invoke__">parse</span>().<span class="title function_ invoke__">ok</span>())</span><br><span class="line">        .<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;部分解析成功: &#123;:?&#125;&quot;</span>, numbers);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="12-性能优化技巧"><a href="#12-性能优化技巧" class="headerlink" title="12. 性能优化技巧"></a>12. 性能优化技巧</h2><h3 id="12-1-使用-drain-避免复制"><a href="#12-1-使用-drain-避免复制" class="headerlink" title="12.1 使用 drain 避免复制"></a>12.1 使用 drain 避免复制</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">v</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// drain 会移除并返回元素，避免复制</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first_three</span>: <span class="type">Vec</span>&lt;_&gt; = v.<span class="title function_ invoke__">drain</span>(<span class="number">0</span>..<span class="number">3</span>).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;提取的: &#123;:?&#125;&quot;</span>, first_three);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;剩余的: &#123;:?&#125;&quot;</span>, v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-2-避免重复计算"><a href="#12-2-避免重复计算" class="headerlink" title="12.2 避免重复计算"></a>12.2 避免重复计算</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">numbers</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 不好：重复调用 iter()</span></span><br><span class="line">    <span class="comment">// let sum: i32 = numbers.iter().sum();</span></span><br><span class="line">    <span class="comment">// let count = numbers.iter().count();</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 好：使用 fold 一次遍历</span></span><br><span class="line">    <span class="keyword">let</span> (sum, count) = numbers.<span class="title function_ invoke__">iter</span>()</span><br><span class="line">        .<span class="title function_ invoke__">fold</span>((<span class="number">0</span>, <span class="number">0</span>), |(sum, count), &amp;x| (sum + x, count + <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;总和: &#123;&#125;, 数量: &#123;&#125;&quot;</span>, sum, count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="12-3-使用-by-ref-保留迭代器"><a href="#12-3-使用-by-ref-保留迭代器" class="headerlink" title="12.3 使用 by_ref 保留迭代器"></a>12.3 使用 by_ref 保留迭代器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">iter</span> = <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].<span class="title function_ invoke__">into_iter</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用 by_ref 只消费部分迭代器</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">first_two</span>: <span class="type">Vec</span>&lt;_&gt; = iter.<span class="title function_ invoke__">by_ref</span>().<span class="title function_ invoke__">take</span>(<span class="number">2</span>).<span class="title function_ invoke__">collect</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;前两个: &#123;:?&#125;&quot;</span>, first_two);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 继续使用剩余的迭代器</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">rest</span>: <span class="type">Vec</span>&lt;_&gt; = iter.<span class="title function_ invoke__">collect</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;剩余的: &#123;:?&#125;&quot;</span>, rest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>迭代器是 Rust 中处理序列数据的核心工具，掌握它能让你的代码更加：</p>
+<ul>
+<li><strong>简洁优雅</strong>：用链式调用替代复杂的循环逻辑</li>
+<li><strong>安全可靠</strong>：编译期保证类型安全，避免越界访问</li>
+<li><strong>高效性能</strong>：零成本抽象，编译后性能与手写循环相当</li>
+<li><strong>函数式风格</strong>：结合闭包实现声明式编程</li>
+<li><strong>可组合性</strong>：多个简单操作组合成复杂的数据处理管道</li>
+</ul>
+<p>迭代器与闭包是 Rust 函数式编程的两大支柱，它们共同构成了 Rust 中优雅而高效的数据处理范式。熟练运用迭代器，是编写惯用 Rust 代码的必备技能。</p>
+<p><strong>Hooray！Iterators 小节完成！！！</strong></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/10/06/rust-closures/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Rust/" title="Rust">
+                        #Rust
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2025/10/08/solana-cpi-pda/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%9F%BA%E7%A1%80"><span class="toc-text">1. 迭代器基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%88%9B%E5%BB%BA%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">1.1 创建迭代器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%B8%89%E7%A7%8D%E8%BF%AD%E4%BB%A3%E6%96%B9%E6%B3%95"><span class="toc-text">1.2 三种迭代方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Iterator-Trait"><span class="toc-text">2. Iterator Trait</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Iterator-trait-%E5%AE%9A%E4%B9%89"><span class="toc-text">2.1 Iterator trait 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E6%89%8B%E5%8A%A8%E8%B0%83%E7%94%A8-next-%E6%96%B9%E6%B3%95"><span class="toc-text">2.2 手动调用 next 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">2.3 实现自定义迭代器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%B6%88%E8%B4%B9%E9%80%82%E9%85%8D%E5%99%A8%EF%BC%88Consuming-Adaptors%EF%BC%89"><span class="toc-text">3. 消费适配器（Consuming Adaptors）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-sum-%E6%B1%82%E5%92%8C"><span class="toc-text">3.1 sum - 求和</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-collect-%E6%94%B6%E9%9B%86%E4%B8%BA%E9%9B%86%E5%90%88"><span class="toc-text">3.2 collect - 收集为集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%85%B6%E4%BB%96%E6%B6%88%E8%B4%B9%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">3.3 其他消费适配器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%EF%BC%88Iterator-Adaptors%EF%BC%89"><span class="toc-text">4. 迭代器适配器（Iterator Adaptors）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-map-%E6%98%A0%E5%B0%84%E8%BD%AC%E6%8D%A2"><span class="toc-text">4.1 map - 映射转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-filter-%E8%BF%87%E6%BB%A4%E5%85%83%E7%B4%A0"><span class="toc-text">4.2 filter - 过滤元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E5%B8%B8%E7%94%A8%E8%BF%AD%E4%BB%A3%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">4.3 常用迭代器适配器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%93%BE%E5%BC%8F%E8%B0%83%E7%94%A8"><span class="toc-text">5. 链式调用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%A4%8D%E6%9D%82%E7%9A%84%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="toc-text">5.1 复杂的数据处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="toc-text">5.2 字符串处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="toc-text">5.3 结构化数据处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">6. 实用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-find-%E6%9F%A5%E6%89%BE%E5%85%83%E7%B4%A0"><span class="toc-text">6.1 find - 查找元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-any-%E5%92%8C-all-%E6%9D%A1%E4%BB%B6%E6%A3%80%E6%9F%A5"><span class="toc-text">6.2 any 和 all - 条件检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-fold-%E7%B4%AF%E7%A7%AF%E8%AE%A1%E7%AE%97"><span class="toc-text">6.3 fold - 累积计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-flat-map-%E6%89%81%E5%B9%B3%E5%8C%96%E6%98%A0%E5%B0%84"><span class="toc-text">6.4 flat_map - 扁平化映射</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E6%80%A7%E8%83%BD"><span class="toc-text">7. 迭代器与性能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E9%9B%B6%E6%88%90%E6%9C%AC%E6%8A%BD%E8%B1%A1"><span class="toc-text">7.1 零成本抽象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">7.2 惰性求值的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95"><span class="toc-text">8. 高级用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">8.1 组合多个迭代器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E8%8C%83%E5%9B%B4%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">8.2 范围迭代器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-partition-%E5%88%86%E5%8C%BA"><span class="toc-text">8.3 partition - 分区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%B8%B8%E8%A7%81%E9%99%B7%E9%98%B1%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-text">9. 常见陷阱与最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E9%81%BF%E5%85%8D%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84-collect"><span class="toc-text">9.1 避免不必要的 collect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E6%B3%A8%E6%84%8F%E8%BF%AD%E4%BB%A3%E5%99%A8%E7%9A%84%E6%B6%88%E8%B4%B9"><span class="toc-text">9.2 注意迭代器的消费</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E4%BD%BF%E7%94%A8%E8%BF%AD%E4%BB%A3%E5%99%A8%E8%80%8C%E9%9D%9E%E7%B4%A2%E5%BC%95"><span class="toc-text">9.3 使用迭代器而非索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B"><span class="toc-text">10. 实战案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E7%BB%9F%E8%AE%A1%E5%8D%95%E8%AF%8D%E9%A2%91%E7%8E%87"><span class="toc-text">10.1 统计单词频率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2%E7%AE%A1%E9%81%93"><span class="toc-text">10.2 数据转换管道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-%E7%9F%A9%E9%98%B5%E8%BD%AC%E7%BD%AE"><span class="toc-text">10.3 矩阵转置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-4-%E6%9F%A5%E6%89%BE%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0"><span class="toc-text">10.4 查找重复元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-5-%E5%88%86%E7%BB%84%E5%92%8C%E8%81%9A%E5%90%88"><span class="toc-text">10.5 分组和聚合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-text">11. 迭代器与错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-filter-map-%E8%BF%87%E6%BB%A4%E5%92%8C%E6%98%A0%E5%B0%84"><span class="toc-text">11.1 filter_map - 过滤和映射</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%A4%84%E7%90%86-Result-%E5%BA%8F%E5%88%97"><span class="toc-text">11.2 处理 Result 序列</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8A%80%E5%B7%A7"><span class="toc-text">12. 性能优化技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E4%BD%BF%E7%94%A8-drain-%E9%81%BF%E5%85%8D%E5%A4%8D%E5%88%B6"><span class="toc-text">12.1 使用 drain 避免复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E9%81%BF%E5%85%8D%E9%87%8D%E5%A4%8D%E8%AE%A1%E7%AE%97"><span class="toc-text">12.2 避免重复计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-3-%E4%BD%BF%E7%94%A8-by-ref-%E4%BF%9D%E7%95%99%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">12.3 使用 by_ref 保留迭代器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Rust%20%E2%80%94%E2%80%94%20%E8%BF%AD%E4%BB%A3%E5%99%A8 + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F10%2F07%2Frust-iterators%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

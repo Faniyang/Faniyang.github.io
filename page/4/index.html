@@ -10,13 +10,10 @@
   <!-- 用于搜索引擎的文章摘要 -->
   
   
+    <meta name="robots" content="noindex" />
+  
   
   <title>
-    
-      archive_a: 2023 
-      
-      
-      |
     
      Let it flow~
   </title>
@@ -109,340 +106,57 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
-
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
-
-<div class="container archives">
+        <div class="container index">
   <div class="post-list">
+    <!-- 遍历渲染文章 -->
     
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2025</span>
-          </h2>
-        </div>
-      
-      <div class="post-item" title="Raydium Swap —— Config">
-        <div class="time-m-d">10-11</div>
-        <div class="title">
-          <a href="/2025/10/11/raydium-swap-config/">
-            <span>Raydium Swap —— Config</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 并发">
-        <div class="time-m-d">10-10</div>
-        <div class="title">
-          <a href="/2025/10/10/rust-concurrency/">
-            <span>Rust —— 并发</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 智能指针">
-        <div class="time-m-d">10-09</div>
-        <div class="title">
-          <a href="/2025/10/09/rust-smart-pointers/">
-            <span>Rust —— 智能指针</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Solana —— PDA 与 CPI">
-        <div class="time-m-d">10-08</div>
-        <div class="title">
-          <a href="/2025/10/08/solana-cpi-pda/">
-            <span>Solana —— PDA 与 CPI</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 迭代器">
-        <div class="time-m-d">10-07</div>
-        <div class="title">
-          <a href="/2025/10/07/rust-iterators/">
-            <span>Rust —— 迭代器</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 闭包">
-        <div class="time-m-d">10-06</div>
-        <div class="title">
-          <a href="/2025/10/06/rust-closures/">
-            <span>Rust —— 闭包</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Layer2 —— OP Stack 介绍">
-        <div class="time-m-d">10-05</div>
-        <div class="title">
-          <a href="/2025/10/05/op-stack-intro-part5/">
-            <span>Layer2 —— OP Stack 介绍</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Solana —— SPL TOKEN 简单合约">
-        <div class="time-m-d">10-04</div>
-        <div class="title">
-          <a href="/2025/10/04/solana-spl-token/">
-            <span>Solana —— SPL TOKEN 简单合约</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Solana —— Token 基础">
-        <div class="time-m-d">10-03</div>
-        <div class="title">
-          <a href="/2025/10/03/solana-token-basic/">
-            <span>Solana —— Token 基础</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Solana —— 账户模型与简单交互">
-        <div class="time-m-d">10-02</div>
-        <div class="title">
-          <a href="/2025/10/02/solana-account-model/">
-            <span>Solana —— 账户模型与简单交互</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Solana —— 环境搭建与基础命令">
-        <div class="time-m-d">10-01</div>
-        <div class="title">
-          <a href="/2025/10/01/solana-install-and-cli/">
-            <span>Solana —— 环境搭建与基础命令</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 生命周期">
-        <div class="time-m-d">09-30</div>
-        <div class="title">
-          <a href="/2025/09/30/rust-lifetimes/">
-            <span>Rust —— 生命周期</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 特征">
-        <div class="time-m-d">09-29</div>
-        <div class="title">
-          <a href="/2025/09/29/rust-traits/">
-            <span>Rust —— 特征</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 泛型">
-        <div class="time-m-d">09-28</div>
-        <div class="title">
-          <a href="/2025/09/28/rust-generic-types/">
-            <span>Rust —— 泛型</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 错误处理">
-        <div class="time-m-d">09-27</div>
-        <div class="title">
-          <a href="/2025/09/27/rust-error-handling/">
-            <span>Rust —— 错误处理</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 常见集合">
-        <div class="time-m-d">09-26</div>
-        <div class="title">
-          <a href="/2025/09/26/rust-common-collections/">
-            <span>Rust —— 常见集合</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 枚举和模式匹配">
-        <div class="time-m-d">09-25</div>
-        <div class="title">
-          <a href="/2025/09/25/rust-enums-and-pattern-matching/">
-            <span>Rust —— 枚举和模式匹配</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 结构体">
-        <div class="time-m-d">09-24</div>
-        <div class="title">
-          <a href="/2025/09/24/rust-structs/">
-            <span>Rust —— 结构体</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 所有权">
-        <div class="time-m-d">09-23</div>
-        <div class="title">
-          <a href="/2025/09/23/rust-ownership/">
-            <span>Rust —— 所有权</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 流程控制">
-        <div class="time-m-d">09-22</div>
-        <div class="title">
-          <a href="/2025/09/22/rust-control-flows/">
-            <span>Rust —— 流程控制</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 数据类型和函数">
-        <div class="time-m-d">09-21</div>
-        <div class="title">
-          <a href="/2025/09/21/rust-datatype-and-functions/">
-            <span>Rust —— 数据类型和函数</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— 变量和可变性">
-        <div class="time-m-d">09-20</div>
-        <div class="title">
-          <a href="/2025/09/20/rust-variables-and-mutability/">
-            <span>Rust —— 变量和可变性</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Rust —— Hello, World!">
-        <div class="time-m-d">09-19</div>
-        <div class="title">
-          <a href="/2025/09/19/rust-hello-world/">
-            <span>Rust —— Hello, World!</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Layer2 —— Op Stack 组件日志管理">
-        <div class="time-m-d">09-18</div>
-        <div class="title">
-          <a href="/2025/09/18/log-mgmt-part4/">
-            <span>Layer2 —— Op Stack 组件日志管理</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Layer2 —— Systemd 自动化管理 OP Stack 组件">
-        <div class="time-m-d">09-17</div>
-        <div class="title">
-          <a href="/2025/09/17/systemd-auto-mgmt-part3/">
-            <span>Layer2 —— Systemd 自动化管理 OP Stack 组件</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Layer2 —— Blockscout 部署指南">
-        <div class="time-m-d">09-16</div>
-        <div class="title">
-          <a href="/2025/09/16/blockscout-deployment-part2/">
-            <span>Layer2 —— Blockscout 部署指南</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Layer2 —— OP Stack 部署指南">
-        <div class="time-m-d">09-15</div>
-        <div class="title">
-          <a href="/2025/09/15/op-stack-deployment-part1/">
-            <span>Layer2 —— OP Stack 部署指南</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="慢练勤修，别急放松 | 道家武术馆一月清修">
-        <div class="time-m-d">02-22</div>
-        <div class="title">
-          <a href="/2025/02/22/taichi-28/">
-            <span>慢练勤修，别急放松 | 道家武术馆一月清修</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2024</span>
-          </h2>
-        </div>
-      
-      <div class="post-item" title="神圣的静默 | 武夷山东山禅林十日内观">
-        <div class="time-m-d">12-12</div>
-        <div class="title">
-          <a href="/2024/12/12/vipassana/">
-            <span>神圣的静默 | 武夷山东山禅林十日内观</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="25 Today, Halfway to 50 🤭">
-        <div class="time-m-d">01-15</div>
-        <div class="title">
-          <a href="/2024/01/15/happy-birthday/">
-            <span>25 Today, Halfway to 50 🤭</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2023</span>
-          </h2>
-        </div>
-      
       <div class="post-item" title="A Dialogue with Myself">
-        <div class="time-m-d">12-31</div>
+        <div class="time-m-d">2023-12-31</div>
         <div class="title">
           <a href="/2023/12/31/2023/">
-            <span>A Dialogue with Myself</span>
+            
+              
+                <span>A Dialogue with Myself</span>
+              
+            
           </a>
         </div>
       </div>
     
       <div class="post-item" title="Fortunate to Cross Paths">
-        <div class="time-m-d">12-17</div>
+        <div class="time-m-d">2023-12-17</div>
         <div class="title">
           <a href="/2023/12/17/fortunate_to_cross_paths/">
-            <span>Fortunate to Cross Paths</span>
+            
+              
+                <span>Fortunate to Cross Paths</span>
+              
+            
           </a>
         </div>
       </div>
     
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2022</span>
-          </h2>
-        </div>
-      
       <div class="post-item" title="于人来人往中，不惧离索">
-        <div class="time-m-d">12-31</div>
+        <div class="time-m-d">2022-12-31</div>
         <div class="title">
           <a href="/2022/12/31/2022/">
-            <span>于人来人往中，不惧离索</span>
+            
+              
+                <span>于人来人往中，不惧离索</span>
+              
+            
           </a>
         </div>
       </div>
     
   </div>
+  <nav class="post-navigation">
+    
+      <a href="/page/3/"><i class="iconfont icon-angleleft"></i></a>
+    
+    <span class="page-num">4 / 4</span>
+    
+  </nav>
 </div>
 
         

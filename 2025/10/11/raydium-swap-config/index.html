@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="Faniyang" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
+  <title>
+    
+      Raydium Swap —— Config 
+      
+      
+      |
+    
+     Let it flow~
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Let it flow~" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">iFan Yang</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">Friends</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Raydium Swap —— Config</div>
+      <div class="post-attach">
+        
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Solana/" title="Solana">
+                    #Solana
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Raydium-Swap/" title="Raydium Swap">
+                    #Raydium Swap
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>在 Raydium Swap 系统中，<strong>Config</strong> 是全局配置中心，用于统一管理费率参数、权限开关和资金接收地址，是各个流动性池运行的基础控制单元。</p>
+<h2 id="合约代码"><a href="#合约代码" class="headerlink" title="合约代码"></a>合约代码</h2><h3 id="1-states-config-rs-配置账户数据结构"><a href="#1-states-config-rs-配置账户数据结构" class="headerlink" title="1. states&#x2F;config.rs 配置账户数据结构"></a>1. states&#x2F;config.rs 配置账户数据结构</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// programs/swap/src/states/config.rs</span></span><br><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> AMM_CONFIG_SEED: &amp;<span class="type">str</span> = <span class="string">&quot;amm_config&quot;</span>; <span class="comment">// AMM 配置账户的种子前缀</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">const</span> FEE_RATE_DENOMINATOR_VALUE: <span class="type">u64</span> = <span class="number">1_000_000</span>; <span class="comment">// 费率分母值，所有费率参数都使用这个作为分母</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#[account]</span></span><br><span class="line"><span class="meta">#[derive(Default, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">AmmConfig</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> bump: <span class="type">u8</span>,                  <span class="comment">// PDA的bump种子</span></span><br><span class="line">    <span class="keyword">pub</span> disable_create_pool: <span class="type">bool</span>, <span class="comment">// 是否禁止创建新池子</span></span><br><span class="line">    <span class="keyword">pub</span> index: <span class="type">u16</span>,                <span class="comment">// 配置索引，用于区分不同配置</span></span><br><span class="line">    <span class="keyword">pub</span> trade_fee_rate: <span class="type">u64</span>,       <span class="comment">// 交易手续费率，单位：百万分之一，例如2500表示0.25%</span></span><br><span class="line">    <span class="keyword">pub</span> protocol_fee_rate: <span class="type">u64</span>,    <span class="comment">// 协议费率，从交易费中抽取的比例，例如200000表示20%</span></span><br><span class="line">    <span class="keyword">pub</span> fund_fee_rate: <span class="type">u64</span>,        <span class="comment">// 基金费率，从交易费中抽取的比例，例如300000表示30%</span></span><br><span class="line">    <span class="keyword">pub</span> create_pool_fee: <span class="type">u64</span>, <span class="comment">// 创建新池子需要支付的费用，单位：lamports，例如1_000_000_000表示1 SOL</span></span><br><span class="line">    <span class="keyword">pub</span> protocol_owner: Pubkey, <span class="comment">// 协议费用接收地址</span></span><br><span class="line">    <span class="keyword">pub</span> fund_owner: Pubkey,   <span class="comment">// 基金费用接收地址</span></span><br><span class="line">    <span class="keyword">pub</span> creator_fee_rate: <span class="type">u64</span>, <span class="comment">// 池子创建者费率，单位：百万分之一，例如5000表示0.5%</span></span><br><span class="line">    <span class="keyword">pub</span> padding: [<span class="type">u64</span>; <span class="number">15</span>],   <span class="comment">// 预留空间，用于未来扩展功能而不需要迁移账户（120字节）</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">AmmConfig</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">const</span> LEN: <span class="type">usize</span> = <span class="number">8</span> + <span class="number">1</span> + <span class="number">1</span> + <span class="number">2</span> + <span class="number">4</span> * <span class="number">8</span> + <span class="number">32</span> * <span class="number">2</span> + <span class="number">8</span> + <span class="number">8</span> * <span class="number">15</span>; <span class="comment">// 账户总大小：236字节</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-accounts-struct-create-config-account-rs-账户约束"><a href="#2-accounts-struct-create-config-account-rs-账户约束" class="headerlink" title="2. accounts_struct&#x2F;create_config_account.rs - 账户约束"></a>2. accounts_struct&#x2F;create_config_account.rs - 账户约束</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// programs/swap/src/accounts_struct/create_config_account.rs</span></span><br><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> crate::states::*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// 创建AMM配置的账户约束</span></span><br><span class="line"><span class="meta">#[derive(Accounts)]</span></span><br><span class="line"><span class="meta">#[instruction(index: u16)]</span> <span class="comment">// 从指令参数中获取index，用于生成PDA</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CreateAmmConfig</span>&lt;<span class="symbol">&#x27;info</span>&gt; &#123;</span><br><span class="line">    <span class="comment">/// AMM 配置账户，使用PDA确保每个index只能创建一个配置</span></span><br><span class="line">    <span class="comment">/// Seeds: [&quot;amm_config&quot;, index]</span></span><br><span class="line">    <span class="meta">#[account(</span></span><br><span class="line"><span class="meta">        init,  // 初始化新账户</span></span><br><span class="line"><span class="meta">        seeds = [</span></span><br><span class="line"><span class="meta">            AMM_CONFIG_SEED.as_bytes(),  // <span class="string">&quot;amm_config&quot;</span></span></span><br><span class="line"><span class="meta">            &amp;index.to_be_bytes()  // 配置索引</span></span><br><span class="line"><span class="meta">        ]</span>,</span><br><span class="line">        bump,  <span class="comment">// PDA bump，由Anchor自动查找</span></span><br><span class="line">        payer = owner,  <span class="comment">// 支付账户租金的账户</span></span><br><span class="line">        space = AmmConfig::LEN  <span class="comment">// 账户所需空间大小</span></span><br><span class="line">    )]</span><br><span class="line">    <span class="keyword">pub</span> amm_config: Account&lt;<span class="symbol">&#x27;info</span>, AmmConfig&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[account(mut)]</span></span><br><span class="line">    <span class="keyword">pub</span> owner: Signer&lt;<span class="symbol">&#x27;info</span>&gt;, <span class="comment">// 配置创建者，支付账户租金和交易费用</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">pub</span> system_program: Program&lt;<span class="symbol">&#x27;info</span>, System&gt;, <span class="comment">// Solana系统程序，用于创建账户</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-instructions-create-config-rs-指令逻辑"><a href="#3-instructions-create-config-rs-指令逻辑" class="headerlink" title="3. instructions&#x2F;create_config.rs 指令逻辑"></a>3. instructions&#x2F;create_config.rs 指令逻辑</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// programs/swap/src/instructions/create_config.rs</span></span><br><span class="line"><span class="keyword">use</span> anchor_lang::prelude::*;</span><br><span class="line"><span class="keyword">use</span> std::ops::DerefMut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> crate::accounts_struct::*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_amm_config</span>(</span><br><span class="line">    ctx: Context&lt;CreateAmmConfig&gt;,</span><br><span class="line">    index: <span class="type">u16</span>,</span><br><span class="line">    trade_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    protocol_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    fund_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    create_pool_fee: <span class="type">u64</span>,</span><br><span class="line">    creator_fee_rate: <span class="type">u64</span>,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">amm_config</span> = ctx.accounts.amm_config.<span class="title function_ invoke__">deref_mut</span>();</span><br><span class="line">    amm_config.protocol_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br><span class="line">    amm_config.bump = ctx.bumps.amm_config;</span><br><span class="line">    amm_config.disable_create_pool = <span class="literal">false</span>;</span><br><span class="line">    amm_config.index = index;</span><br><span class="line">    amm_config.trade_fee_rate = trade_fee_rate;</span><br><span class="line">    amm_config.protocol_fee_rate = protocol_fee_rate;</span><br><span class="line">    amm_config.fund_fee_rate = fund_fee_rate;</span><br><span class="line">    amm_config.create_pool_fee = create_pool_fee;</span><br><span class="line">    amm_config.fund_owner = ctx.accounts.owner.<span class="title function_ invoke__">key</span>();</span><br><span class="line">    amm_config.creator_fee_rate = creator_fee_rate;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-lib-rs-入口函数和参数校验"><a href="#4-lib-rs-入口函数和参数校验" class="headerlink" title="4. lib.rs - 入口函数和参数校验"></a>4. lib.rs - 入口函数和参数校验</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// programs/swap/src/lib.rs</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">create_amm_config</span>(</span><br><span class="line">    ctx: Context&lt;CreateAmmConfig&gt;,</span><br><span class="line">    index: <span class="type">u16</span>,</span><br><span class="line">    trade_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    protocol_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    fund_fee_rate: <span class="type">u64</span>,</span><br><span class="line">    create_pool_fee: <span class="type">u64</span>,</span><br><span class="line">    creator_fee_rate: <span class="type">u64</span>,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="comment">// 费率不能超过 100%</span></span><br><span class="line">    <span class="built_in">assert!</span>(trade_fee_rate + creator_fee_rate &lt; FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line">    <span class="built_in">assert!</span>(protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line">    <span class="built_in">assert!</span>(fund_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line">    <span class="built_in">assert!</span>(fund_fee_rate + protocol_fee_rate &lt;= FEE_RATE_DENOMINATOR_VALUE);</span><br><span class="line">    instructions::<span class="title function_ invoke__">create_amm_config</span>(</span><br><span class="line">        ctx,</span><br><span class="line">        index,</span><br><span class="line">        trade_fee_rate,</span><br><span class="line">        protocol_fee_rate,</span><br><span class="line">        fund_fee_rate,</span><br><span class="line">        create_pool_fee,</span><br><span class="line">        creator_fee_rate,</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在 AMM 系统中，<code>AmmConfig</code> 是底层费率治理的基础模块</p>
+<ul>
+<li>通过配置 AMM 账户存储全局配置参数和费率设置。</li>
+<li>通过 index 区分不同配置，可为不同交易对设置不同费率。</li>
+</ul>
+<p><strong>Hooray！Raydium Swap Config 学习完成！！！</strong></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2025/10/10/rust-concurrency/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Solana/" title="Solana">
+                        #Solana
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Raydium-Swap/" title="Raydium Swap">
+                        #Raydium Swap
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E7%BA%A6%E4%BB%A3%E7%A0%81"><span class="toc-text">合约代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-states-config-rs-%E9%85%8D%E7%BD%AE%E8%B4%A6%E6%88%B7%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-text">1. states&#x2F;config.rs 配置账户数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-accounts-struct-create-config-account-rs-%E8%B4%A6%E6%88%B7%E7%BA%A6%E6%9D%9F"><span class="toc-text">2. accounts_struct&#x2F;create_config_account.rs - 账户约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-instructions-create-config-rs-%E6%8C%87%E4%BB%A4%E9%80%BB%E8%BE%91"><span class="toc-text">3. instructions&#x2F;create_config.rs 指令逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-lib-rs-%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C"><span class="toc-text">4. lib.rs - 入口函数和参数校验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+  <div id="gitalk-container"></div>
+
+  <script>
+    function loadGitalkSuc() {
+      const gitalk = new Gitalk({
+        clientID: 'Ov23ligSd5OPjaIDKSXq',
+        clientSecret: '1f378b8d7cf32ffd7accc21a3d02eb20927efa4f',
+        repo: 'blog-comments',
+        owner: 'faniyang',
+        admin: ['faniyang'],
+        id: location.pathname,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  </script>
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" onload="loadGitalkSuc(this)"></script>
+  
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Faniyang">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+              <a title="rss" href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://Faniyang.github.io/">Copyright © Faniyang 2025</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Typing...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Raydium%20Swap%20%E2%80%94%E2%80%94%20Config + '&url=' + https%3A%2F%2Ffaniyang.github.io%2F2025%2F10%2F11%2Fraydium-swap-config%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
